@@ -2,6 +2,9 @@ package com.pojo;
 
 
 
+
+import java.time.LocalDate;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -22,10 +25,20 @@ public class Author {
 	private Integer id;
 	
 	private String authorName;
+	
+	private LocalDate dateOfBirth;
 
 	// getter and setters
 	public Integer getId() {
 		return id;
+	}
+
+	public LocalDate getDateOfBirth() {
+		return dateOfBirth;
+	}
+
+	public void setDateOfBirth(LocalDate localDate) {
+		this.dateOfBirth = localDate;
 	}
 
 	public String getAuthorName() {

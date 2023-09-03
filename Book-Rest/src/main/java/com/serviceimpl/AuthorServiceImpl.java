@@ -1,6 +1,9 @@
 package com.serviceimpl;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,6 +24,7 @@ public class AuthorServiceImpl implements AuthorService {
 	
 	@Autowired
 	private AuthorDao authorDao;
+
 	
 	@Override
 	public ResponseEntity<String> addAuthor(Map<String, String> map) {
@@ -43,6 +47,9 @@ public class AuthorServiceImpl implements AuthorService {
 			Author author = new Author();
 			
 			author.setAuthorName(map.get("name"));
+			String dateOfBirth = map.get("dob");
+			LocalDate localDate = LocalDate.parse(dateOfBirth,DateTimeFormatter.ISO_DATE);
+			author.setDateOfBirth(localDate);
 			
 			return author;
 		} catch (Exception e) {
