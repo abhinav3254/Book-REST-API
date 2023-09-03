@@ -1,0 +1,37 @@
+user values
+
+{
+    "username": "john_doe",
+    "name": "John Doe",
+    "email": "john@example.com",
+    "password": "hashed_password",
+    "phone": "123-456-7890",
+    "address": "123 Main St, City, Country"
+}
+
+
+book 
+
+{
+    "title": "Sample Book Title",
+    "author": "John Author",
+    "category": "Fiction",
+    "isbn": 9781234590,
+    "publisher": "Example Publisher",
+    "language": "English",
+    "pageCount": 300,
+    "shortDesc": "A short description of the book.",
+    "longDesc": "A longer description of the book.",
+    "thumbnail": "https://example.com/thumbnail.jpg",
+    "publishStatus": "Published",
+    "price": 29.99
+}
+
+order table
+
+{
+    "bookId":"2",
+    "billingAddress": "123 Billing Street, City, Country",
+    "shippingAddress": "456 Shipping Street, City, Country",
+    "notes": "Additional notes for the order."
+}
