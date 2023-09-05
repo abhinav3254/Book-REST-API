@@ -90,15 +90,12 @@ public class UserServiceImpl implements UserService {
 		try {
 			User user = userDao.getUserByUserName(requestMap.get("username"));
 			if (Objects.isNull(user)) {
-				String messageBuild = "{"
-						+ "\n message: user not found"
-								+ "\n}"; 
-				return new ResponseEntity<String>(messageBuild,HttpStatus.BAD_REQUEST); 
+				return new ResponseEntity<String>(Constants.designMessage("user not found"),HttpStatus.BAD_REQUEST); 
 			} else {
 				Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(requestMap.get("username"), requestMap.get("password")));
 				if (authentication.isAuthenticated()) {
 					if (myUserDetailsService.getUserDetails().getStatus().equalsIgnoreCase("true")) {
-						return new ResponseEntity<String>("{ \ntoken\" : \""+jwtUtils.generateToken(myUserDetailsService.getUserDetails().getUsername(), myUserDetailsService.getUserDetails().getRole())+"\n}",HttpStatus.OK);
+						return new ResponseEntity<String>(jwtUtils.generateToken(myUserDetailsService.getUserDetails().getUsername(), myUserDetailsService.getUserDetails().getRole()),HttpStatus.OK);
 					} else {
 						String messageBuild = "{"
 								+ "\n message: wait for admin approval"

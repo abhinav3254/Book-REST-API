@@ -1,5 +1,6 @@
 package com.serviceimpl;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,5 +53,18 @@ public class PublisherServiceImpl implements PublisherService {
 		
 		throw new RuntimeException("Error in PublisherServiceImpl");
 	}
+
+	@Override
+	public ResponseEntity<List<Publishers>> getAllPublishers() {
+		try {
+			List<Publishers> listPublishers = dao.findAll();
+			return new ResponseEntity<List<Publishers>>(listPublishers,HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return new ResponseEntity<List<Publishers>>(HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+	
+	
 
 }

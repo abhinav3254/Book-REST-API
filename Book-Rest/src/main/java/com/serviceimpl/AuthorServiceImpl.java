@@ -2,6 +2,7 @@ package com.serviceimpl;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Map;
 
 
@@ -56,6 +57,17 @@ public class AuthorServiceImpl implements AuthorService {
 			e.printStackTrace();
 		}
 		throw new RuntimeException("Issue in Map in Author");
+	}
+
+	@Override
+	public ResponseEntity<List<Author>> getAllAuthor() {
+		try {
+			List<Author> authorList = authorDao.findAll();
+			return new ResponseEntity<List<Author>>(authorList,HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return new ResponseEntity<List<Author>>(HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
 }

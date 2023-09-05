@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
 
 import com.constants.Constants;
 import com.dao.BookDao;
@@ -22,6 +23,7 @@ import com.pojo.Ratings;
 import com.pojo.User;
 import com.service.RatingsService;
 
+//@Service
 public class RatingsServiceImpl implements RatingsService {
 
 	@Autowired
@@ -34,7 +36,7 @@ public class RatingsServiceImpl implements RatingsService {
 	private BookDao bookDao;
 	
 	@Autowired
-	private RatingsDao ratingsDao;
+//	private RatingsDao ratingsDao;
 	
 	@Override
 	public ResponseEntity<String> postRating(Map<String, String> map) {
@@ -44,7 +46,7 @@ public class RatingsServiceImpl implements RatingsService {
 			if (Objects.isNull(ratings)) {
 				return new ResponseEntity<String>(Constants.designMessage("SOME VALUES ARE INCORRECT"),HttpStatus.BAD_REQUEST);
 			} else {
-				ratingsDao.save(ratings);
+//				ratingsDao.save(ratings);
 				return new ResponseEntity<String>(Constants.designMessage("RATING POSTED"),HttpStatus.OK);
 			}
 		} catch (Exception e) {
