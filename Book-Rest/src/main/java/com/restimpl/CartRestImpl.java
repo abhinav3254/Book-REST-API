@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.constants.Constants;
+import com.pojo.Book;
 import com.pojo.Cart;
 import com.rest.CartRest;
 import com.service.CartService;
@@ -21,9 +22,9 @@ public class CartRestImpl implements CartRest {
 	private CartService cartService;
 	
 	@Override
-	public ResponseEntity<String> addToCart(Map<String, List<Integer>> map) {
+	public ResponseEntity<String> addToCart(List<Integer> list) {
 		try {
-			return cartService.addToCart(map);
+			return cartService.addToCart(list);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -38,6 +39,16 @@ public class CartRestImpl implements CartRest {
 			e.printStackTrace();
 		}
 		return new ResponseEntity<List<Cart>>(HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+
+	@Override
+	public ResponseEntity<List<Book>> getFromCart(List<Integer> list) {
+		try {
+			return cartService.getFromCart(list);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return new ResponseEntity<List<Book>>(HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
 }

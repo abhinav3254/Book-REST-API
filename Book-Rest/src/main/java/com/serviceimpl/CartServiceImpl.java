@@ -1,8 +1,9 @@
 package com.serviceimpl;
 
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,6 +22,7 @@ import com.pojo.Cart;
 import com.pojo.User;
 import com.service.CartService;
 
+
 @Service
 public class CartServiceImpl implements CartService {
 
@@ -37,9 +39,9 @@ public class CartServiceImpl implements CartService {
 	private UserDao userDao;
 
 	@Override
-	public ResponseEntity<String> addToCart(Map<String, List<Integer>> map) {
+	public ResponseEntity<String> addToCart(List<Integer> list) {
 		try {
-			List<Integer> listBookId = map.get("list");
+			List<Integer> listBookId = list;
 			List<Book> listBook = new ArrayList<Book>();
 
 			for (int i = 0; i < listBookId.size(); i++) {
@@ -59,7 +61,7 @@ public class CartServiceImpl implements CartService {
 			cart.setUser(user);
 
 			cartDao.save(cart);
-
+			
 			return new ResponseEntity<String>(Constants.designMessage("ADDED"), HttpStatus.OK);
 
 		} catch (Exception e) {
@@ -89,6 +91,23 @@ public class CartServiceImpl implements CartService {
 			e.printStackTrace();
 		}
 		return new ResponseEntity<List<Cart>>(HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+
+	@Override
+	public ResponseEntity<List<Book>> getFromCart(List<Integer> list) {
+		try {
+			List<Integer> listBookId = list;
+			List<Book> listBook = new ArrayList<Book>();
+			
+			System.out.println(list.toString());
+			
+			listBook = bookDao.findAllById(listBookId);
+			
+			return new ResponseEntity<List<Book>>(listBook,HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return new ResponseEntity<List<Book>>(HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
 }
