@@ -48,5 +48,15 @@ public class BookRestImpl implements BookRest {
 		}
 		return new ResponseEntity<List<Book>>(HttpStatus.INTERNAL_SERVER_ERROR);
 	}
+
+	@Override
+	public ResponseEntity<Book> getBookById(String id) {
+		try {
+			return bookService.getBookById(id);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return new ResponseEntity<Book>(HttpStatus.INTERNAL_SERVER_ERROR);
+	}
 	
 }

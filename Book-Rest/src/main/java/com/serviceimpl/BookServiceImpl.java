@@ -107,4 +107,21 @@ public class BookServiceImpl implements BookService {
 		return new ResponseEntity<List<Book>>(HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
+	@Override
+	public ResponseEntity<Book> getBookById(String id) {
+		try {
+			System.out.println("ABhinav Id is :- "+id);
+			Optional<Book> book = bookDao.findById(Integer.parseInt(id));
+			System.out.println(book.get());
+			if (Objects.isNull(book.get())) {
+				return new ResponseEntity<Book>(HttpStatus.BAD_REQUEST);
+			} else {
+			return new ResponseEntity<Book>(book.get(),HttpStatus.OK);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return new ResponseEntity<Book>(HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+
 }

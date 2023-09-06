@@ -15,4 +15,6 @@ public interface BookService {
 	
 	public ResponseEntity<List<Book>> searchBooks(Map<String, String>map);
 	
+	public ResponseEntity<Book> getBookById(String id);
+	
 }
