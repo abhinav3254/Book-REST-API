@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.constants.Constants;
 import com.dao.BookDao;
@@ -23,7 +24,7 @@ import com.pojo.Orders;
 import com.pojo.User;
 import com.service.OrderService;
 
-
+@Transactional
 @Service
 public class OrderServiceImpl implements OrderService {
 	
@@ -44,31 +45,33 @@ public class OrderServiceImpl implements OrderService {
 
 	@Override
 	public ResponseEntity<String> placeOrder(List<Integer> list) {
-		try {
-			List<Integer> listBookId = list;
-			List<Book> listBook = new ArrayList<Book>();	
-			listBook = bookDao.findAllById(listBookId);
-			
-			Orders orders = new Orders();
-			
-			orders.setBooks(listBook);
-			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-			String userToken = authentication.getName();
-			String username = jwtUtils.extractUsername(userToken);
-			
-			User user = userDao.getUserByUserName(username);
-			
-			orders.setUser(user);
-			
-			ordersDao.save(orders);
-			
-			return new ResponseEntity<String>("ORDER PLACED",HttpStatus.OK);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
+	    try {
+	    	System.out.println("from browser it came :- >>>>>>>>>>>>>>>>> "+list.toString());
+	        List<Integer> listBookId = list;
+	        List<Book> listBooks = bookDao.findAllById(listBookId);
+
+	        // Assuming you can obtain the currently authenticated user
+	        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	        String userToken = authentication.getName();
+	        String username = jwtUtils.extractUsername(userToken);
+	        User user = userDao.getUserByUserName(username);
+
+	        // Create the Orders entity and associate it with the user and books
+	        Orders orders = new Orders();
+	        orders.setUser(user);
+	        orders.setBooks(listBooks);
+
+	        // Save the order
+	        ordersDao.save(orders);
+
+	        return new ResponseEntity<String>("ORDER PLACED", HttpStatus.OK);
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return new ResponseEntity<String>("Error placing order", HttpStatus.INTERNAL_SERVER_ERROR);
+	    }
 	}
-	
+
+	/*
 	private Orders orderConfig(Map<String, String>map) {
 		try {
 			Orders orders = new Orders();
@@ -94,6 +97,7 @@ public class OrderServiceImpl implements OrderService {
 		}
 		throw new RuntimeException(Constants.designMessage("ALL FIELDS ARE MANDATORY!!"));
 	}
+	*/
 
 	@Override
 	public ResponseEntity<List<Orders>> getAllOrders() {
@@ -106,6 +110,7 @@ public class OrderServiceImpl implements OrderService {
 			User user = userDao.getUserByUserName(username);
 			
 			List<Orders> listOrders = ordersDao.getAllOrders(user.getId().toString());
+
 			return new ResponseEntity<List<Orders>>(listOrders,HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
