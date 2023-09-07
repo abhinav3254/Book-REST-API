@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import com.constants.Constants;
 import com.dao.UserDao;
+import com.jwt.JwtFilter;
 import com.jwt.JwtUtils;
 import com.jwt.MyUserDetailsService;
 import com.pojo.User;
@@ -35,6 +36,9 @@ public class UserServiceImpl implements UserService {
 	
 	@Autowired
 	private JwtUtils jwtUtils;
+	
+	@Autowired
+	private JwtFilter jwtFilter;
 
 	@Override
 	public ResponseEntity<String> signUp(Map<String, String> requestMap) {
@@ -111,6 +115,20 @@ public class UserServiceImpl implements UserService {
 				+ "\n message : SOMETHING WENT WRONG\n"
 						+ "}";
 		return new ResponseEntity<String>(Constants.SOMETHING_WENT_WRONG,HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+
+	@Override
+	public ResponseEntity<String> isAdminCheck() {
+		try {
+			if(jwtFilter.isAdmin()) {
+				return new ResponseEntity<String>("1#1$",HttpStatus.OK);
+			} else {
+				return new ResponseEntity<String>("2#2$",HttpStatus.OK);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
 }

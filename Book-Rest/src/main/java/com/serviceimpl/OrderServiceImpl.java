@@ -12,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.constants.Constants;
+import com.dao.BookDao;
 import com.dao.CartDao;
 import com.dao.OrdersDao;
 import com.dao.UserDao;
@@ -35,30 +36,37 @@ public class OrderServiceImpl implements OrderService {
 	@Autowired
 	private OrdersDao ordersDao;
 	
+	@Autowired
+	private BookDao bookDao;
 	
 	@Autowired
 	private JwtUtils jwtUtils;
 
 	@Override
-	public ResponseEntity<String> placeOrder(Map<String, String> map) {
+	public ResponseEntity<String> placeOrder(List<Integer> list) {
 		try {
-			Orders orders = orderConfig(map);
+			List<Integer> listBookId = list;
+			List<Book> listBook = new ArrayList<Book>();	
+			listBook = bookDao.findAllById(listBookId);
+			
+			Orders orders = new Orders();
+			
+			orders.setBooks(listBook);
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+			String userToken = authentication.getName();
+			String username = jwtUtils.extractUsername(userToken);
+			
+			User user = userDao.getUserByUserName(username);
+			
+			orders.setUser(user);
+			
 			ordersDao.save(orders);
 			
-			Cart cart = cartDao.getById(Integer.parseInt(map.get("cartId")));
-			cartDao.deleteCartBooksByCartId(cart.getId().toString());
-			
-			// finding current user 
-			Authentication authentication = SecurityContextHolder. getContext(). getAuthentication();
-			String token = authentication.getName();
-			String username = jwtUtils.extractUsername(token);
-			User user = userDao.getUserByUserName(username);
-			cartDao.deleteCartByUserId(user.getId().toString());
-			return new ResponseEntity<String>(Constants.designMessage("Order Placed"),HttpStatus.OK);
+			return new ResponseEntity<String>("ORDER PLACED",HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return new ResponseEntity<String>(Constants.SOMETHING_WENT_WRONG,HttpStatus.INTERNAL_SERVER_ERROR);
+		return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	
 	private Orders orderConfig(Map<String, String>map) {

@@ -40,4 +40,14 @@ public class UserRestImpl implements UserRest {
 		return new ResponseEntity<String>("SOMETHING WENT WRONG", HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
+	@Override
+	public ResponseEntity<String> isAdminCheck() {
+		try {
+			return userService.isAdminCheck();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return new ResponseEntity<String>("INTERNAL SERVER ERROR",HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+
 }

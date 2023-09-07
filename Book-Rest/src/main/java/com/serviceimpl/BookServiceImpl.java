@@ -96,9 +96,10 @@ public class BookServiceImpl implements BookService {
 	}
 
 	@Override
-	public ResponseEntity<List<Book>> searchBooks(Map<String, String> map) {
+	public ResponseEntity<List<Book>> searchBooks(String search) {
 		try {
-			String value = map.get("value");
+			String value = search;
+			System.out.println((bookDao.findBookByValue(value)).toString());
 			List<Book> listBook = bookDao.findBookByValue(value);
 			return new ResponseEntity<List<Book>>(listBook,HttpStatus.OK);
 		} catch (Exception e) {

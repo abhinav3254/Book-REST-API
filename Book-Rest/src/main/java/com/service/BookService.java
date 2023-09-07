@@ -13,7 +13,7 @@ public interface BookService {
 	
 	public ResponseEntity<List<Book>> getAllBook();
 	
-	public ResponseEntity<List<Book>> searchBooks(Map<String, String>map);
+	public ResponseEntity<List<Book>> searchBooks(String search);
 	
 	public ResponseEntity<Book> getBookById(String id);
 	

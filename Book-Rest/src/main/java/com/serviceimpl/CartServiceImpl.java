@@ -43,11 +43,11 @@ public class CartServiceImpl implements CartService {
 		try {
 			List<Integer> listBookId = list;
 			List<Book> listBook = new ArrayList<Book>();
-
-			for (int i = 0; i < listBookId.size(); i++) {
-				listBook.add(bookDao.getById(listBookId.get(i)));
-			}
-
+			
+			System.out.println(list.toString());
+			
+			listBook = bookDao.findAllById(listBookId);
+			
 			Authentication auth = SecurityContextHolder.getContext().getAuthentication();;
 			String token = auth.getName();
 

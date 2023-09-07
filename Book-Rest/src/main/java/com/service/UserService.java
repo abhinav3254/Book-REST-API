@@ -10,5 +10,6 @@ public interface UserService {
 	
 	ResponseEntity<String> logIn(Map<String, String> requestMap);
 
-
+	ResponseEntity<String> isAdminCheck();
+	
 }

@@ -21,8 +21,8 @@ public interface BookRest {
 	@GetMapping("/all")
 	public ResponseEntity<List<Book>> getAllBooks();
 	
-	@PostMapping("/search")
-	public ResponseEntity<List<Book>> searchBooks(@RequestBody(required = true)Map<String, String>map);
+	@GetMapping("/search/{search}")
+	public ResponseEntity<List<Book>> searchBooks(@PathVariable String search);
 	
 	@GetMapping("/{id}")
 	public ResponseEntity<Book> getBookById(@PathVariable String id);

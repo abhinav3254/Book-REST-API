@@ -14,14 +14,21 @@ public interface BookDao extends JpaRepository<Book, Integer> {
 			+ "join author on author.id = book.author_id")
 	public List<Book> getAllBooks();
 	
-	@Query(nativeQuery = true,value = "SELECT * from book,author,publishers where category like %:value% OR\r\n"
-			+ "						 description like %:value% OR\r\n"
-			+ "                         genre like %:value% OR\r\n"
-			+ "                         price like %:value% OR\r\n"
-			+ "                         title like %:value% OR\r\n"
-			+ "						 author.author_name like %:value% OR\r\n"
-			+ "                         publishers.country like %:value% OR\r\n"
-			+ "                         publishers.publisher_name like %:value%;")
+	@Query(nativeQuery = true,value = "SELECT book.*\r\n"
+			+ "FROM book\r\n"
+			+ "LEFT JOIN publishers ON book.publishers_id = publishers.id\r\n"
+			+ "LEFT JOIN author ON book.author_id = author.id\r\n"
+			+ "WHERE\r\n"
+			+ "    publishers.publisher_name LIKE %:value%\r\n"
+			+ "    OR author.author_name LIKE %:value%\r\n"
+			+ "    OR book.title LIKE %:value%\r\n"
+			+ "    OR book.genre LIKE %:value%\r\n"
+			+ "    OR book.price LIKE %:value%\r\n"
+			+ "    OR book.description LIKE %:value%\r\n"
+			+ "    OR book.category LIKE %:value%;\r\n"
+			+ "")
 	public List<Book> findBookByValue(String value);
+	
+	
 	
 }

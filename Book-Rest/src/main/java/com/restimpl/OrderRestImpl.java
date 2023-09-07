@@ -21,9 +21,9 @@ public class OrderRestImpl implements OrdersRest {
 	private OrderService orderService;
 
 	@Override
-	public ResponseEntity<String> placeOrder(Map<String, String> map) {
+	public ResponseEntity<String> placeOrder(List<Integer> list) {
 		try {
-			return orderService.placeOrder(map);
+			return orderService.placeOrder(list);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

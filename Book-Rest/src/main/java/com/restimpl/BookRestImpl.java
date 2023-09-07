@@ -40,9 +40,9 @@ public class BookRestImpl implements BookRest {
 	}
 
 	@Override
-	public ResponseEntity<List<Book>> searchBooks(Map<String, String> map) {
+	public ResponseEntity<List<Book>> searchBooks(String search) {
 		try {
-			return bookService.searchBooks(map);
+			return bookService.searchBooks(search);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
