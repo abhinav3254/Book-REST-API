@@ -1,6 +1,6 @@
 package com.pojo;
 
-
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,12 +8,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
-import lombok.Data;
 
-@Data
+//@Data
 @Entity
 public class Book {
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
@@ -27,10 +29,16 @@ public class Book {
 	@Column(length = 2000)
 	private String imageUrl;
 	
+	// latest change on 8 sept 2023
+	private String isbn;
+	private String pageCount;
+	private boolean bookStatus;
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date publishDate;
+	// upto here
 	private String title;
-	private String genre;
 	private String price;
-	@Column(length = 2000)
+	@Column(length = 4000)
 	private String description;
 	private String category;
 	
@@ -51,9 +59,7 @@ public class Book {
 	public String getTitle() {
 		return title;
 	}
-	public String getGenre() {
-		return genre;
-	}
+	
 	public String getPrice() {
 		return price;
 	}
@@ -78,9 +84,6 @@ public class Book {
 	public void setTitle(String title) {
 		this.title = title;
 	}
-	public void setGenre(String genre) {
-		this.genre = genre;
-	}
 	public void setPrice(String price) {
 		this.price = price;
 	}
@@ -90,4 +93,29 @@ public class Book {
 	public void setCategory(String category) {
 		this.category = category;
 	}
+	public String getIsbn() {
+		return isbn;
+	}
+	public void setIsbn(String isbn) {
+		this.isbn = isbn;
+	}
+	public String getPageCount() {
+		return pageCount;
+	}
+	public void setPageCount(String pageCount) {
+		this.pageCount = pageCount;
+	}
+	public boolean isBookStatus() {
+		return bookStatus;
+	}
+	public void setBookStatus(boolean bookStatus) {
+		this.bookStatus = bookStatus;
+	}
+	public Date getPublishDate() {
+		return publishDate;
+	}
+	public void setPublishDate(Date publishDate) {
+		this.publishDate = publishDate;
+	}
+	
 }

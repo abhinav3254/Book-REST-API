@@ -22,7 +22,6 @@ public interface BookDao extends JpaRepository<Book, Integer> {
 			+ "    publishers.publisher_name LIKE %:value%\r\n"
 			+ "    OR author.author_name LIKE %:value%\r\n"
 			+ "    OR book.title LIKE %:value%\r\n"
-			+ "    OR book.genre LIKE %:value%\r\n"
 			+ "    OR book.price LIKE %:value%\r\n"
 			+ "    OR book.description LIKE %:value%\r\n"
 			+ "    OR book.category LIKE %:value%;\r\n"

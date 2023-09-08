@@ -1,7 +1,10 @@
 package com.serviceimpl;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -22,19 +25,18 @@ import com.pojo.Book;
 import com.pojo.Publishers;
 import com.service.BookService;
 
-
 @Service
 public class BookServiceImpl implements BookService {
-	
+
 	@Autowired
 	private AuthorDao authorDao;
-	
+
 	@Autowired
 	private PublishersDao publishersDao;
-	
+
 	@Autowired
 	private BookDao bookDao;
-	
+
 	@Autowired
 	private JwtFilter jwtFilter;
 
@@ -43,42 +45,60 @@ public class BookServiceImpl implements BookService {
 		try {
 			if (jwtFilter.isAdmin()) {
 				Book book = configBook(map);
-				
+
 				if (!Objects.isNull(book)) {
 					bookDao.save(book);
-					return new ResponseEntity<String>(Constants.designMessage("ADDED BOOKS"),HttpStatus.OK);
+					return new ResponseEntity<String>(Constants.designMessage("ADDED BOOKS"), HttpStatus.OK);
 				} else {
-					return new ResponseEntity<String>(Constants.designMessage("SOME VALUES ARE MISSING"),HttpStatus.BAD_REQUEST);
+					return new ResponseEntity<String>(Constants.designMessage("SOME VALUES ARE MISSING"),
+							HttpStatus.BAD_REQUEST);
 				}
 			} else {
-				return new ResponseEntity<String>(Constants.designMessage("UNAUTHORIZED ACCESS"),HttpStatus.UNAUTHORIZED);
+				return new ResponseEntity<String>(Constants.designMessage("UNAUTHORIZED ACCESS"),
+						HttpStatus.UNAUTHORIZED);
 			}
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return new ResponseEntity<String>(Constants.designMessage("INTERNAL SERVER ERROR"),HttpStatus.INTERNAL_SERVER_ERROR);
+		return new ResponseEntity<String>(Constants.designMessage("INTERNAL SERVER ERROR"),
+				HttpStatus.INTERNAL_SERVER_ERROR);
 	}
-	
-	private Book configBook(Map<String, String>map) {
+
+	private Book configBook(Map<String, String> map) {
 		try {
 			Book book = new Book();
 			Integer authorId = Integer.parseInt(map.get("authorId"));
-			
+
 			Integer publisherId = Integer.parseInt(map.get("publisherId"));
-			
+
 			Optional<Author> author = authorDao.findById(authorId);
 			Optional<Publishers> publishers = publishersDao.findById(publisherId);
-			
+
 			book.setAuthor(author.get());
 			book.setPublishers(publishers.get());
 			book.setCategory(map.get("category"));
 			book.setDescription(map.get("description"));
-			book.setGenre(map.get("genre"));
 			book.setImageUrl(map.get("image"));
 			book.setPrice(map.get("price"));
 			book.setTitle(map.get("title"));
-			
+
+			book.setIsbn(map.get("isbn"));
+			book.setPageCount(map.get("pageCount"));
+			if (map.get("status").contains("t")) {
+				book.setBookStatus(true);
+			} else {
+				book.setBookStatus(false);
+			}
+
+			String dateString = map.get("date");
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+
+			Date date = dateFormat.parse(dateString);
+			System.out.println(date);
+
+			book.setPublishDate(date);
+
 			return book;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -90,8 +110,8 @@ public class BookServiceImpl implements BookService {
 	public ResponseEntity<List<Book>> getAllBook() {
 		try {
 			List<Book> listBooks = bookDao.getAllBooks();
-			
-			return new ResponseEntity<List<Book>>(listBooks,HttpStatus.OK);
+
+			return new ResponseEntity<List<Book>>(listBooks, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -104,7 +124,7 @@ public class BookServiceImpl implements BookService {
 			String value = search;
 			System.out.println((bookDao.findBookByValue(value)).toString());
 			List<Book> listBook = bookDao.findBookByValue(value);
-			return new ResponseEntity<List<Book>>(listBook,HttpStatus.OK);
+			return new ResponseEntity<List<Book>>(listBook, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -114,13 +134,13 @@ public class BookServiceImpl implements BookService {
 	@Override
 	public ResponseEntity<Book> getBookById(String id) {
 		try {
-			System.out.println("ABhinav Id is :- "+id);
+			System.out.println("ABhinav Id is :- " + id);
 			Optional<Book> book = bookDao.findById(Integer.parseInt(id));
 			System.out.println(book.get());
 			if (Objects.isNull(book.get())) {
 				return new ResponseEntity<Book>(HttpStatus.BAD_REQUEST);
 			} else {
-			return new ResponseEntity<Book>(book.get(),HttpStatus.OK);
+				return new ResponseEntity<Book>(book.get(), HttpStatus.OK);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -134,8 +154,8 @@ public class BookServiceImpl implements BookService {
 			List<Book> listBooks = bookDao.getAllBooks();
 			//
 			List<String> listSuggest = new ArrayList<String>();
-			
-			for (int i =0;i<listBooks.size();i++) {
+
+			for (int i = 0; i < listBooks.size(); i++) {
 				String title = listBooks.get(i).getTitle();
 				listSuggest.add(title);
 				String authorName = listBooks.get(i).getAuthor().getAuthorName();
@@ -143,8 +163,8 @@ public class BookServiceImpl implements BookService {
 				String publisherName = listBooks.get(i).getPublishers().getPublisherName();
 				listSuggest.add(publisherName);
 			}
-			
-			return new ResponseEntity<List<String>>(listSuggest,HttpStatus.OK);
+
+			return new ResponseEntity<List<String>>(listSuggest, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -155,13 +175,11 @@ public class BookServiceImpl implements BookService {
 	public ResponseEntity<List<Book>> getBookByCategory(String category) {
 		try {
 			List<Book> listBook = bookDao.findBookByCategory(category);
-			return new ResponseEntity<List<Book>>(listBook,HttpStatus.OK);
+			return new ResponseEntity<List<Book>>(listBook, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return new ResponseEntity<List<Book>>(HttpStatus.INTERNAL_SERVER_ERROR);
 	}
-	
-	 
 
 }
