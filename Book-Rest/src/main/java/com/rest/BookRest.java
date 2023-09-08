@@ -27,4 +27,10 @@ public interface BookRest {
 	@GetMapping("/{id}")
 	public ResponseEntity<Book> getBookById(@PathVariable String id);
 	
+	@GetMapping("/suggest")
+	public ResponseEntity<List<String>> getBookSuggestion();
+	
+	@GetMapping("/category/{category}")
+	public ResponseEntity<List<Book>> getBookByCategory(@PathVariable String category);
+	
 }

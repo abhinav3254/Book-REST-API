@@ -1,5 +1,7 @@
 package com.serviceimpl;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -88,6 +90,7 @@ public class BookServiceImpl implements BookService {
 	public ResponseEntity<List<Book>> getAllBook() {
 		try {
 			List<Book> listBooks = bookDao.getAllBooks();
+			
 			return new ResponseEntity<List<Book>>(listBooks,HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -124,5 +127,41 @@ public class BookServiceImpl implements BookService {
 		}
 		return new ResponseEntity<Book>(HttpStatus.INTERNAL_SERVER_ERROR);
 	}
+
+	@Override
+	public ResponseEntity<List<String>> getSuggestion() {
+		try {
+			List<Book> listBooks = bookDao.getAllBooks();
+			//
+			List<String> listSuggest = new ArrayList<String>();
+			
+			for (int i =0;i<listBooks.size();i++) {
+				String title = listBooks.get(i).getTitle();
+				listSuggest.add(title);
+				String authorName = listBooks.get(i).getAuthor().getAuthorName();
+				listSuggest.add(authorName);
+				String publisherName = listBooks.get(i).getPublishers().getPublisherName();
+				listSuggest.add(publisherName);
+			}
+			
+			return new ResponseEntity<List<String>>(listSuggest,HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return new ResponseEntity<List<String>>(HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+
+	@Override
+	public ResponseEntity<List<Book>> getBookByCategory(String category) {
+		try {
+			List<Book> listBook = bookDao.findBookByCategory(category);
+			return new ResponseEntity<List<Book>>(listBook,HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return new ResponseEntity<List<Book>>(HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+	
+	 
 
 }

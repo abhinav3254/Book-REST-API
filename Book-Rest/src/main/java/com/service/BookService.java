@@ -17,4 +17,8 @@ public interface BookService {
 	
 	public ResponseEntity<Book> getBookById(String id);
 	
+	public ResponseEntity<List<String>> getSuggestion();
+	
+	public ResponseEntity<List<Book>> getBookByCategory(String category);
+	
 }

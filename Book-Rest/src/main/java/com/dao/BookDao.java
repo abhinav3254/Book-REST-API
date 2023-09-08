@@ -30,5 +30,7 @@ public interface BookDao extends JpaRepository<Book, Integer> {
 	public List<Book> findBookByValue(String value);
 	
 	
+	@Query(nativeQuery = true,value = "select * from book where category like %:value%")
+	public List<Book> findBookByCategory(String value);
 	
 }
