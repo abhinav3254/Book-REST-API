@@ -1,5 +1,6 @@
 package com.serviceimpl;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,6 +85,25 @@ public class CartItemServiceImpl implements CartItemService {
 			e.printStackTrace();
 		}
 		return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+
+	@Override
+	public ResponseEntity<List<CartItem>> getAllItemsFromCart() {
+		try {
+			
+			Authentication auth = SecurityContextHolder.getContext().getAuthentication();;
+			String token = auth.getName();
+
+			String username = jwtUtils.extractUsername(token);
+
+			User user = userDao.getUserByUserName(username);
+			List<CartItem> list = cartItemDao.getAllItemsFromCart(user.getId());
+			
+			return new ResponseEntity<List<CartItem>>(list,HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return new ResponseEntity<List<CartItem>>(HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
 }
