@@ -58,9 +58,9 @@ public class OrderServiceImpl implements OrderService {
 	@Override
 	public ResponseEntity<String> placeOrder(Map<String, String>map) {
 	    try {
-	    	
 	    	// first add items in the cart then place order
 	    	cartServiceImpl.addToCart();
+
 	    	
 	        // Assuming you can obtain the currently authenticated user
 	        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -105,6 +105,12 @@ public class OrderServiceImpl implements OrderService {
 	            cartItem.setUser(null);
 	            cartItemDao.save(cartItem); // Update each cart item in the database
 	        }
+	        
+	     // Assuming you have a Cart object called "cart"
+	        cart.setUser(null); // Set the user to null
+	        cartDao.save(cart); // Update the cart in the database
+
+	        
 
 	        return new ResponseEntity<String>("ORDER PLACED", HttpStatus.OK);
 	    } catch (Exception e) {
