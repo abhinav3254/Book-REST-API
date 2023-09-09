@@ -48,7 +48,7 @@ public class CartItemServiceImpl implements CartItemService {
 			Optional<Book> book = bookDao.findById(Integer.parseInt(bookId));
 
 //			Find that if book exists already if yes then increase the quantity else add the book
-			CartItem cartItem2 = cartItemDao.findBookInCartItem(book.get().getId());
+			CartItem cartItem2 = cartItemDao.findBookInCartItem(book.get().getId(),user.getId());
 
 			if (Objects.isNull(cartItem2)) {
 				CartItem cartItem = new CartItem();

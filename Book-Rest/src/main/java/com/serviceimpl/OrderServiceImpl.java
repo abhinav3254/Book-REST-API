@@ -42,16 +42,25 @@ public class OrderServiceImpl implements OrderService {
 	@Autowired
 	private OrdersDao ordersDao;
 	
+	@Autowired
+	private CartDao cartDao;
+	
 	
 	@Autowired
 	private PaymentDao paymentDao;
 	
 	@Autowired
 	private JwtUtils jwtUtils;
+	
+	@Autowired
+	private CartServiceImpl cartServiceImpl;
 
 	@Override
 	public ResponseEntity<String> placeOrder(Map<String, String>map) {
 	    try {
+	    	
+	    	// first add items in the cart then place order
+	    	cartServiceImpl.addToCart();
 	    	
 	        // Assuming you can obtain the currently authenticated user
 	        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -59,8 +68,8 @@ public class OrderServiceImpl implements OrderService {
 	        String username = jwtUtils.extractUsername(userToken);
 	        User user = userDao.getUserByUserName(username);
 	        
-	        List<CartItem> listCartItems = cartItemDao.getAllItemsFromCart(user.getId());
-
+	        Cart cart = cartDao.getCartByUserId(user.getId());
+	        
 	        Payment payment = paymentDao.getAllPaymentByUser(user.getId());
 	        
 	        String address = map.get("address");
@@ -69,28 +78,33 @@ public class OrderServiceImpl implements OrderService {
 	        
 	        orders.setOrderDate(LocalDateTime.now());
 	        
+	        orders.setCart(cart);
 	        orders.setUser(user);
 	        orders.setAddress(address);
 	        orders.setPayment(payment);
 	        
-	        orders.setCartItems(listCartItems);
 	        
 	        ordersDao.save(orders);
 	        
-	        Payment payment2 = paymentDao.getAllPaymentByUser(user.getId());
-	        List<CartItem> cartItem = cartItemDao.getAllItemsFromCart(user.getId());
 	        
-	        payment2.setUser(null);
-	        
-	        for (int i = 0;i<cartItem.size();i++) {
-	        	cartItem.get(i).setUser(null);
+	     // Get the user ID
+	        Integer userId = user.getId();
+
+	        // Retrieve the payment and cart items for the user
+	        Payment payment2 = paymentDao.getAllPaymentByUser(userId);
+	        List<CartItem> cartItems = cartItemDao.getAllItemsFromCart(userId);
+
+	        // Set user details to null for payment
+	        if (payment2 != null) {
+	            payment2.setUser(null);
+	            paymentDao.save(payment2); // Update the payment in the database
 	        }
-	        
-	        /*
-	        paymentDao.deleteById(payment2.getPid());
-	        cartItemDao.deleteAllInBatch(cartItem);
-	        */
-	        
+
+	        // Set user details to null for each cart item
+	        for (CartItem cartItem : cartItems) {
+	            cartItem.setUser(null);
+	            cartItemDao.save(cartItem); // Update each cart item in the database
+	        }
 
 	        return new ResponseEntity<String>("ORDER PLACED", HttpStatus.OK);
 	    } catch (Exception e) {

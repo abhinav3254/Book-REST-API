@@ -15,8 +15,8 @@ import com.pojo.CartItem;
 public interface CartItemDao extends JpaRepository<CartItem, Integer> {
 	
 //	Find if book exists
-	@Query(nativeQuery = true,value = "select * from cart_item where book_id=:bookId")
-	public CartItem findBookInCartItem(Integer bookId);
+	@Query(nativeQuery = true,value = "select * from cart_item where book_id=:bookId and user_id =:uid")
+	public CartItem findBookInCartItem(Integer bookId,Integer uid);
 	
 	@Query(nativeQuery = true,value = "select * from cart_item where user_id =:userId")
 	public List<CartItem> getAllItemsFromCart(Integer userId);

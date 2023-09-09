@@ -1,17 +1,12 @@
 package com.dao;
 
-import java.util.List;
-
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.pojo.Cart;
 
 public interface CartDao extends JpaRepository<Cart, Integer> {
-	
+	/*
 	@Query(nativeQuery = true,value = "SELECT cart.*, book.*,user.*\r\n"
 			+ "FROM cart_books\r\n"
 			+ "JOIN cart ON cart.id = cart_books.cart_id\r\n"
@@ -31,6 +26,9 @@ public interface CartDao extends JpaRepository<Cart, Integer> {
 	@Modifying
 	@Query(value = "DELETE FROM cart WHERE user_id = :userId", nativeQuery = true)
 	void deleteCartByUserId(@Param("userId") String userId);
-
+	*/
+	
+	@Query(nativeQuery = true,value = "select * from cart where user_id=:uid")
+	public Cart getCartByUserId(Integer uid);
 	
 }
