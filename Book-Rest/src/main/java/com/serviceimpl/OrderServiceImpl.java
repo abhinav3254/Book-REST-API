@@ -1,5 +1,6 @@
 package com.serviceimpl;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -15,12 +16,16 @@ import org.springframework.transaction.annotation.Transactional;
 import com.constants.Constants;
 import com.dao.BookDao;
 import com.dao.CartDao;
+import com.dao.CartItemDao;
 import com.dao.OrdersDao;
+import com.dao.PaymentDao;
 import com.dao.UserDao;
 import com.jwt.JwtUtils;
 import com.pojo.Book;
 import com.pojo.Cart;
+import com.pojo.CartItem;
 import com.pojo.Orders;
+import com.pojo.Payment;
 import com.pojo.User;
 import com.service.OrderService;
 
@@ -32,37 +37,60 @@ public class OrderServiceImpl implements OrderService {
 	private UserDao userDao;
 	
 	@Autowired
-	private CartDao cartDao;
+	private CartItemDao cartItemDao;
 	
 	@Autowired
 	private OrdersDao ordersDao;
 	
+	
 	@Autowired
-	private BookDao bookDao;
+	private PaymentDao paymentDao;
 	
 	@Autowired
 	private JwtUtils jwtUtils;
 
 	@Override
-	public ResponseEntity<String> placeOrder(List<Integer> list) {
+	public ResponseEntity<String> placeOrder(Map<String, String>map) {
 	    try {
-	    	System.out.println("from browser it came :- >>>>>>>>>>>>>>>>> "+list.toString());
-	        List<Integer> listBookId = list;
-	        List<Book> listBooks = bookDao.findAllById(listBookId);
-
+	    	
 	        // Assuming you can obtain the currently authenticated user
 	        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 	        String userToken = authentication.getName();
 	        String username = jwtUtils.extractUsername(userToken);
 	        User user = userDao.getUserByUserName(username);
+	        
+	        List<CartItem> listCartItems = cartItemDao.getAllItemsFromCart(user.getId());
 
-	        // Create the Orders entity and associate it with the user and books
+	        Payment payment = paymentDao.getAllPaymentByUser(user.getId());
+	        
+	        String address = map.get("address");
+	        
 	        Orders orders = new Orders();
+	        
+	        orders.setOrderDate(LocalDateTime.now());
+	        
 	        orders.setUser(user);
-	        orders.setBooks(listBooks);
-
-	        // Save the order
+	        orders.setAddress(address);
+	        orders.setPayment(payment);
+	        
+	        orders.setCartItems(listCartItems);
+	        
 	        ordersDao.save(orders);
+	        
+	        Payment payment2 = paymentDao.getAllPaymentByUser(user.getId());
+	        List<CartItem> cartItem = cartItemDao.getAllItemsFromCart(user.getId());
+	        
+	        payment2.setUser(null);
+	        
+	        for (int i = 0;i<cartItem.size();i++) {
+	        	cartItem.get(i).setUser(null);
+	        }
+	        
+	        /*
+	        paymentDao.deleteById(payment2.getPid());
+	        cartItemDao.deleteAllInBatch(cartItem);
+	        */
+	        
 
 	        return new ResponseEntity<String>("ORDER PLACED", HttpStatus.OK);
 	    } catch (Exception e) {
@@ -71,34 +99,7 @@ public class OrderServiceImpl implements OrderService {
 	    }
 	}
 
-	/*
-	private Orders orderConfig(Map<String, String>map) {
-		try {
-			Orders orders = new Orders();
-			
-			Cart cart = cartDao.getById(Integer.parseInt(map.get("cartId")));
-			
-			Authentication authentication = SecurityContextHolder. getContext(). getAuthentication();
-			String token = authentication.getName();
-			
-			String username = jwtUtils.extractUsername(token);
-			
-			User user = userDao.getUserByUserName(username);
-			
-			List<Book> orderBooks = new ArrayList<>(cart.getBooks());
-			
-			orders.setBooks(orderBooks);
-			orders.setUser(user);
-			System.out.println(" -- >> abhinav"+orders.getBooks().toString());
-			
-			return orders;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		throw new RuntimeException(Constants.designMessage("ALL FIELDS ARE MANDATORY!!"));
-	}
-	*/
-
+	
 	@Override
 	public ResponseEntity<List<Orders>> getAllOrders() {
 		try {

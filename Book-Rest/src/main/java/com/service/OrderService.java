@@ -8,7 +8,7 @@ import com.pojo.Orders;
 
 public interface OrderService {
 	
-	public ResponseEntity<String> placeOrder(List<Integer> list);
+	public ResponseEntity<String> placeOrder(Map<String, String>map);
 	
 	public ResponseEntity<List<Orders>> getAllOrders();
 }

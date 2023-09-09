@@ -15,7 +15,7 @@ import com.pojo.Orders;
 public interface OrdersRest {
 	
 	@PostMapping("/order")
-	public ResponseEntity<String> placeOrder(@RequestBody(required = true)List<Integer> list);
+	public ResponseEntity<String> placeOrder(@RequestBody(required = true)Map<String, String>map);
 	
 	@GetMapping("/all")
 	public ResponseEntity<List<Orders>> getAllOrder();

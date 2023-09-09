@@ -1,39 +1,40 @@
 package com.pojo;
 
+import java.util.Date;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import lombok.Data;
 
 
 @Data
 @Entity
-public class CartItem {
+public class Payment {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
-	
+	private Integer pid;
 	
 	@OneToOne
 	private User user;
 	
-	@OneToOne
-	private Book book;
-	private double bookPrice;
-	private int quantity;
+	private String cardNumber;
 	
-	private Double cgst;
+	private String bankName;
 	
-	private Double sgst;
+	private String nameOnCard;
 	
-	private Double discount;
+	private String cvv;
 	
-	private Double finalPrice;
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date expiryDate; 
 	
+	private Double amount;
 
 }

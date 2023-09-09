@@ -39,7 +39,7 @@ public class CartItemServiceImpl implements CartItemService {
 		try {
 			System.out.println("Here comes Baby" + bookId);
 			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-			;
+			
 			String token = auth.getName();
 
 			String username = jwtUtils.extractUsername(token);
