@@ -136,9 +136,12 @@ public class CartItemServiceImpl implements CartItemService {
 
 			Integer quantity = cartItem.getQuantity() - 1;
 
+			if (quantity>0) {
 			cartItem.setQuantity(quantity);
-
 			cartItemDao.save(cartItem);
+			} else {
+				cartItemDao.deleteById(Integer.parseInt(cartItemId));
+			}
 
 			return new ResponseEntity<String>("Decrement", HttpStatus.OK);
 
