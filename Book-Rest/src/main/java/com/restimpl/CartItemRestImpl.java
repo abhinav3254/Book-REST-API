@@ -38,6 +38,47 @@ public class CartItemRestImpl implements CartItemRest {
 		}
 		return new ResponseEntity<List<CartItem>>(HttpStatus.INTERNAL_SERVER_ERROR);
 	}
+
+	@Override
+	public ResponseEntity<String> incrementItem(String cartItemId) {
+		try {
+			return cartItemService.incrementItem(cartItemId);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+
+	@Override
+	public ResponseEntity<String> decrementItem(String cartItemId) {
+		try {
+			return cartItemService.decrementItem(cartItemId);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+
+//	Delete Item from the cart Item
+	@Override
+	public ResponseEntity<String> deleteItem(String cartItemId) {
+		try {
+			return cartItemService.deleteItem(cartItemId);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+
+	@Override
+	public ResponseEntity<Double> getSumOfAllFinalPrice() {
+		try {
+			return cartItemService.getSumOfAllFinalPrice();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return new ResponseEntity<Double>(HttpStatus.INTERNAL_SERVER_ERROR);
+	}
 	
 	
 
