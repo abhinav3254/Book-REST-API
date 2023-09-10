@@ -49,38 +49,45 @@ public class RatingsServiceImpl implements RatingsService {
             String username = jwtUtils.extractUsername(userToken);
             User user = userDao.getUserByUserName(username);
 
-            // Check if the book exists
-            Optional<Book> optionalBook = bookDao.findById(bookId);
-            if (optionalBook.isPresent()) {
-                Book book = optionalBook.get();
+            // Check if the user has already rated the book
+            boolean hasAlreadyRated = ratingsDao.existsByUserAndBook(user.getId(), bookId);
 
-                // Create a new rating
-                Ratings ratings = new Ratings();
-                ratings.setRating(ratingValue);
-                ratings.setUser(user);
+            if (!hasAlreadyRated) {
+                // Check if the book exists
+                Optional<Book> optionalBook = bookDao.findById(bookId);
+                if (optionalBook.isPresent()) {
+                    Book book = optionalBook.get();
 
-                // Save the rating
-                ratingsDao.save(ratings);
+                    // Create a new rating
+                    Ratings ratings = new Ratings();
+                    ratings.setRating(ratingValue);
+                    ratings.setUser(user);
 
-                // Add the rating to the book's list of ratings
-                List<Ratings> existingRatings = book.getListRatings();
-                existingRatings.add(ratings);
-                book.setListRatings(existingRatings);
+                    // Save the rating
+                    ratingsDao.save(ratings);
 
-                // Calculate and update the average rating for the book
-                double sum = 0.0;
-                for (Ratings r : existingRatings) {
-                    sum += r.getRating();
+                    // Add the rating to the book's list of ratings
+                    List<Ratings> existingRatings = book.getListRatings();
+                    existingRatings.add(ratings);
+                    book.setListRatings(existingRatings);
+
+                    // Calculate and update the average rating for the book
+                    double sum = 0.0;
+                    for (Ratings r : existingRatings) {
+                        sum += r.getRating();
+                    }
+                    double averageRating = existingRatings.isEmpty() ? 0.0 : sum / existingRatings.size();
+                    book.setAverageRating(averageRating);
+
+                    // Save the updated book with the average rating
+                    bookDao.save(book);
+
+                    return new ResponseEntity<String>("Rating added successfully", HttpStatus.OK);
+                } else {
+                    return new ResponseEntity<String>("Book with ID " + bookId + " not found", HttpStatus.NOT_FOUND);
                 }
-                double averageRating = existingRatings.isEmpty() ? 0.0 : sum / existingRatings.size();
-                book.setAverageRating(averageRating);
-
-                // Save the updated book with the average rating
-                bookDao.save(book);
-
-                return new ResponseEntity<String>("Rating added successfully", HttpStatus.OK);
             } else {
-                return new ResponseEntity<String>("Book with ID " + bookId + " not found", HttpStatus.NOT_FOUND);
+                return new ResponseEntity<String>("You have already rated this book", HttpStatus.BAD_REQUEST);
             }
         } catch (Exception e) {
             e.printStackTrace();
