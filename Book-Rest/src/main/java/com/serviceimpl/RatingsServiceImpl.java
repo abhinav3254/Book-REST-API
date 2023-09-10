@@ -1,6 +1,5 @@
 package com.serviceimpl;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -24,59 +23,68 @@ import com.service.RatingsService;
 
 @Service
 public class RatingsServiceImpl implements RatingsService {
-	
-	@Autowired
-	private JwtUtils jwtUtils;
-	
-	@Autowired
-	private UserDao userDao;
-	
-	@Autowired
-	private RatingsDao ratingsDao;
-	
-	@Autowired
-	private BookDao bookDao;
 
-	@Override
-	public ResponseEntity<String> addRating(Map<String, String> map) {
-		try {
-//			Integer ratingValue = Integer.parseInt(map.get("value"));
-			
-			Integer bookId = Integer.parseInt(map.get("bookId"));
-			
-			/*
-			 * Note that I have not limited the user to one rating to
-			 * one product so we have to limit it so do it 
-			 * simply use native query for this
-			 * */
-			
-			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-	        String userToken = authentication.getName();
-	        String username = jwtUtils.extractUsername(userToken);
-	        User user = userDao.getUserByUserName(username);
-	        
-	        Ratings ratings = new Ratings();
-	        
-	        ratings.setRating(Double.parseDouble(map.get("rating")));
-	        ratings.setUser(user);
-	        
-	        Optional<Book> optionalBook = bookDao.findById(bookId);
-	        if (optionalBook.isPresent()) {
-	            Book book = optionalBook.get();
-	            // Continue with the rest of the code
-	            List<Ratings> existingRatings = book.getListRatings();
-	            existingRatings.add(ratings);
-	            book.setListRatings(existingRatings);
-	            ratingsDao.save(ratings);
-		        bookDao.save(book);
-	        } else {
-	            // Handle the case where the book with the given ID doesn't exist
-	        	System.out.println("Abhinav RatingsService Impl else case throw error here check once");
-	        } 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
-	}
+    @Autowired
+    private JwtUtils jwtUtils;
 
+    @Autowired
+    private UserDao userDao;
+
+    @Autowired
+    private RatingsDao ratingsDao;
+
+    @Autowired
+    private BookDao bookDao;
+
+    @Override
+    public ResponseEntity<String> addRating(Map<String, String> map) {
+        try {
+            // Extract the required data from the map
+            Integer bookId = Integer.parseInt(map.get("bookId"));
+            Double ratingValue = Double.parseDouble(map.get("rating"));
+
+            // Get the authenticated user
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String userToken = authentication.getName();
+            String username = jwtUtils.extractUsername(userToken);
+            User user = userDao.getUserByUserName(username);
+
+            // Check if the book exists
+            Optional<Book> optionalBook = bookDao.findById(bookId);
+            if (optionalBook.isPresent()) {
+                Book book = optionalBook.get();
+
+                // Create a new rating
+                Ratings ratings = new Ratings();
+                ratings.setRating(ratingValue);
+                ratings.setUser(user);
+
+                // Save the rating
+                ratingsDao.save(ratings);
+
+                // Add the rating to the book's list of ratings
+                List<Ratings> existingRatings = book.getListRatings();
+                existingRatings.add(ratings);
+                book.setListRatings(existingRatings);
+
+                // Calculate and update the average rating for the book
+                double sum = 0.0;
+                for (Ratings r : existingRatings) {
+                    sum += r.getRating();
+                }
+                double averageRating = existingRatings.isEmpty() ? 0.0 : sum / existingRatings.size();
+                book.setAverageRating(averageRating);
+
+                // Save the updated book with the average rating
+                bookDao.save(book);
+
+                return new ResponseEntity<String>("Rating added successfully", HttpStatus.OK);
+            } else {
+                return new ResponseEntity<String>("Book with ID " + bookId + " not found", HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<String>("Error adding rating", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

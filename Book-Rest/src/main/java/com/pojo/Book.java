@@ -49,6 +49,8 @@ public class Book {
 	private String description;
 	private String category;
 	
+	private Double averageRating;
+	
 	@OneToMany
 	private List<Ratings> listRatings;
 	
