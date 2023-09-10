@@ -1,18 +1,22 @@
 package com.pojo;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import lombok.Data;
 
-//@Data
+
+@Data
 @Entity
 public class Book {
 	
@@ -41,6 +45,11 @@ public class Book {
 	@Column(length = 4000)
 	private String description;
 	private String category;
+	
+	
+	@OneToMany
+	private List<Ratings> ratings;
+	
 	
 	// getters and setters
 	

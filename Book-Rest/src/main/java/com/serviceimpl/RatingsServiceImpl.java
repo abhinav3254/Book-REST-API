@@ -1,9 +1,7 @@
 package com.serviceimpl;
 
-import java.sql.Date;
-import java.time.LocalDate;
+import java.util.Date;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +11,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import com.constants.Constants;
 import com.dao.BookDao;
 import com.dao.RatingsDao;
 import com.dao.UserDao;
@@ -21,68 +18,57 @@ import com.jwt.JwtUtils;
 import com.pojo.Book;
 import com.pojo.Ratings;
 import com.pojo.User;
-import com.service.RatingsService;
+import com.service.RatingService;
 
-//@Service
-public class RatingsServiceImpl implements RatingsService {
 
-	@Autowired
-	private JwtUtils jwtUtils;
+@Service
+public class RatingsServiceImpl implements RatingService {
 	
 	@Autowired
 	private UserDao userDao;
 	
 	@Autowired
-	private BookDao bookDao;
+	private JwtUtils jwtUtils;
 	
 	@Autowired
-//	private RatingsDao ratingsDao;
+	private RatingsDao ratingsDao;
 	
+	@Autowired
+	private BookDao bookDao;
+
 	@Override
-	public ResponseEntity<String> postRating(Map<String, String> map) {
+	public ResponseEntity<String> addRating(Map<String, String> map) {
 		try {
-			Ratings ratings = ratingsConfig(map);
-			
-			if (Objects.isNull(ratings)) {
-				return new ResponseEntity<String>(Constants.designMessage("SOME VALUES ARE INCORRECT"),HttpStatus.BAD_REQUEST);
-			} else {
-//				ratingsDao.save(ratings);
-				return new ResponseEntity<String>(Constants.designMessage("RATING POSTED"),HttpStatus.OK);
-			}
-		} catch (Exception e) {
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	        String userToken = authentication.getName();
+	        String username = jwtUtils.extractUsername(userToken);
+	        User user = userDao.getUserByUserName(username);
+	        
+	        
+	        
+	        Double ratingValue = Double.parseDouble(map.get("rating"));
+	        Ratings ratings = new Ratings();
+	        ratings.setRatingDate(new Date());
+	        ratings.setUser(user);
+	        ratings.setRatingValue(ratingValue);
+	        
+	        Optional<Book> bookOptional = bookDao.findById(Integer.parseInt(map.get("bookId")));
+	        
+	        ratings.setBook(bookOptional.get());
+	        
+	        ratingsDao.save(ratings);
+	        
+	        return new ResponseEntity<String>(HttpStatus.OK);
+	       
+	        
+		} catch (org.springframework.dao.DataIntegrityViolationException e) {
+			System.out.println("------------You can't place rating for same book for two times------------------------");
+			return new ResponseEntity<String>("You can't place rating for two orders",HttpStatus.BAD_REQUEST);
+		}
+		catch (Exception e) {
 			e.printStackTrace();
 		}
-		return new ResponseEntity<String>(Constants.designMessage("SOMETHING WENT WRONG!!"),HttpStatus.INTERNAL_SERVER_ERROR);
-	}
-	
-	private Ratings ratingsConfig(Map<String, String>map) {
-		try {
-			Ratings ratings = new Ratings();
-			
-			Authentication authentication = SecurityContextHolder. getContext(). getAuthentication();
-			String token = authentication.getName();
-			String username = jwtUtils.extractUsername(token);
-			User user = userDao.getUserByUserName(username);
-			
-			ratings.setUser(user);
-			
-			String bookId = map.get("bookId");
-			Optional<Book> book = bookDao.findById(Integer.parseInt(bookId));
-			
-			ratings.setBook(book.get());
-			
-			ratings.setRatingDate(LocalDate.now());
-			
-			ratings.setRating(Double.parseDouble(map.get("rating")));
-			ratings.setReview(map.get("review"));
-			
-			ratings.setBook(null);
-			
-			return ratings;
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		throw new RuntimeException("ratingsConfig error");
+		return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
 }
