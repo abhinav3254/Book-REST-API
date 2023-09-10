@@ -1,7 +1,9 @@
 package com.serviceimpl;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
 
@@ -11,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.constants.Constants;
@@ -74,7 +77,23 @@ public class UserServiceImpl implements UserService {
 			user.setEmail(map.get("email"));
 			user.setPassword(map.get("password"));
 			user.setPhone(map.get("phone"));
-			//user.setRegisterDate(now);
+			
+			
+	        
+	        String gender = map.get("gender");
+	        
+	        String dateString = map.get("date");
+	        
+	        if(!dateString.isEmpty()) {
+				SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+				Date date = dateFormat.parse(dateString);
+				user.setDateOfBirth(date);
+			}
+	        
+			user.setRegisterDate(new Date());
+			
+			user.setGender(gender);
+			
 			
 			user.setStatus("true");
 			user.setRole("user");
@@ -99,6 +118,9 @@ public class UserServiceImpl implements UserService {
 				Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(requestMap.get("username"), requestMap.get("password")));
 				if (authentication.isAuthenticated()) {
 					if (myUserDetailsService.getUserDetails().getStatus().equalsIgnoreCase("true")) {
+//						set up last login
+						user.setLastLogin(new Date());
+						userDao.save(user);
 						return new ResponseEntity<String>(jwtUtils.generateToken(myUserDetailsService.getUserDetails().getUsername(), myUserDetailsService.getUserDetails().getRole()),HttpStatus.OK);
 					} else {
 						String messageBuild = "{"
@@ -125,6 +147,70 @@ public class UserServiceImpl implements UserService {
 			} else {
 				return new ResponseEntity<String>("2#2$",HttpStatus.OK);
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+
+	@Override
+	public ResponseEntity<User> getProfile() {
+		try {
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	        String userToken = authentication.getName();
+	        String username = jwtUtils.extractUsername(userToken);
+	        User user = userDao.getUserByUserName(username);
+	        
+	        
+	        return new ResponseEntity<User>(user,HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return new ResponseEntity<User>(HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+
+	@Override
+	public ResponseEntity<String> updateProfile(Map<String, String> map) {
+		try {
+			System.out.println(map.toString());
+			
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	        String userToken = authentication.getName();
+	        String username = jwtUtils.extractUsername(userToken);
+	        User user = userDao.getUserByUserName(username);
+	        
+	        String name =  map.get("name");
+	        String address = map.get("address");
+	        
+	        String email = map.get("email");
+	        String phone = map.get("phone");
+	        
+	        String gender = map.get("gender");
+	        
+	        String dateString = map.get("date");
+	        
+			
+			if(!name.isEmpty())
+				user.setName(name);
+			if (!address.isEmpty())
+				user.setAddress(address);
+			if(!dateString.isEmpty()) {
+				SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+				Date date = dateFormat.parse(dateString);
+				user.setDateOfBirth(date);
+			}
+			if(!email.isEmpty())
+				user.setEmail(email);
+			if (!phone.isEmpty())
+				user.setPhone(phone);
+			if(!gender.isEmpty())
+				user.setGender(gender);
+			
+			userDao.save(user);
+			
+			return new ResponseEntity<String>(HttpStatus.OK);
+	        
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

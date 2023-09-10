@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.pojo.User;
+
 @RequestMapping("/user")
 public interface UserRest {
 	
@@ -19,4 +21,10 @@ public interface UserRest {
 	
 	@GetMapping("/isAdmin")
 	ResponseEntity<String> isAdminCheck();
+	
+	@GetMapping("/profile")
+	public ResponseEntity<User> getUser();
+	
+	@PostMapping("/updateProfile")
+	public ResponseEntity<String> updateProfile(@RequestBody(required = true)Map<String, String>map);
 }
