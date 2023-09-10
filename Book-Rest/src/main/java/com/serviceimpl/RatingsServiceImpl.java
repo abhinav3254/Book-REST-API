@@ -1,6 +1,7 @@
 package com.serviceimpl;
 
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -18,17 +19,17 @@ import com.jwt.JwtUtils;
 import com.pojo.Book;
 import com.pojo.Ratings;
 import com.pojo.User;
-import com.service.RatingService;
+import com.service.RatingsService;
 
 
 @Service
-public class RatingsServiceImpl implements RatingService {
-	
-	@Autowired
-	private UserDao userDao;
+public class RatingsServiceImpl implements RatingsService {
 	
 	@Autowired
 	private JwtUtils jwtUtils;
+	
+	@Autowired
+	private UserDao userDao;
 	
 	@Autowired
 	private RatingsDao ratingsDao;
@@ -39,33 +40,40 @@ public class RatingsServiceImpl implements RatingService {
 	@Override
 	public ResponseEntity<String> addRating(Map<String, String> map) {
 		try {
+//			Integer ratingValue = Integer.parseInt(map.get("value"));
+			
+			Integer bookId = Integer.parseInt(map.get("bookId"));
+			
+			/*
+			 * Note that I have not limited the user to one rating to
+			 * one product so we have to limit it so do it 
+			 * simply use native query for this
+			 * */
+			
 			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 	        String userToken = authentication.getName();
 	        String username = jwtUtils.extractUsername(userToken);
 	        User user = userDao.getUserByUserName(username);
 	        
-	        
-	        
-	        Double ratingValue = Double.parseDouble(map.get("rating"));
 	        Ratings ratings = new Ratings();
-	        ratings.setRatingDate(new Date());
+	        
+	        ratings.setRating(Double.parseDouble(map.get("rating")));
 	        ratings.setUser(user);
-	        ratings.setRatingValue(ratingValue);
 	        
-	        Optional<Book> bookOptional = bookDao.findById(Integer.parseInt(map.get("bookId")));
-	        
-	        ratings.setBook(bookOptional.get());
-	        
-	        ratingsDao.save(ratings);
-	        
-	        return new ResponseEntity<String>(HttpStatus.OK);
-	       
-	        
-		} catch (org.springframework.dao.DataIntegrityViolationException e) {
-			System.out.println("------------You can't place rating for same book for two times------------------------");
-			return new ResponseEntity<String>("You can't place rating for two orders",HttpStatus.BAD_REQUEST);
-		}
-		catch (Exception e) {
+	        Optional<Book> optionalBook = bookDao.findById(bookId);
+	        if (optionalBook.isPresent()) {
+	            Book book = optionalBook.get();
+	            // Continue with the rest of the code
+	            List<Ratings> existingRatings = book.getListRatings();
+	            existingRatings.add(ratings);
+	            book.setListRatings(existingRatings);
+	            ratingsDao.save(ratings);
+		        bookDao.save(book);
+	        } else {
+	            // Handle the case where the book with the given ID doesn't exist
+	        	System.out.println("Abhinav RatingsService Impl else case throw error here check once");
+	        } 
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);

@@ -7,24 +7,24 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.rest.RatingRest;
-import com.service.RatingService;
+import com.rest.RatingsRest;
+import com.service.RatingsService;
 
 
 @RestController
-public class RatingRestImpl implements RatingRest {
-	
-	@Autowired
-	private RatingService ratingService;
+public class RatingsRestImpl implements RatingsRest {
 
+	@Autowired
+	private RatingsService ratingsService;
+	
 	@Override
 	public ResponseEntity<String> addRating(Map<String, String> map) {
 		try {
-			return ratingService.addRating(map);
+			return ratingsService.addRating(map);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
+		return new ResponseEntity<String>(HttpStatus.OK);
 	}
 
 }

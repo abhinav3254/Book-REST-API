@@ -1,20 +1,16 @@
 package com.serviceimpl;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
 import com.constants.Constants;
 import com.dao.AuthorDao;
 import com.dao.BookDao;
@@ -109,8 +105,8 @@ public class BookServiceImpl implements BookService {
 	@Override
 	public ResponseEntity<List<Book>> getAllBook() {
 		try {
-			List<Book> listBooks = bookDao.getAllBooks();
-
+			List<Book> listBooks = bookDao.findAll();
+			
 			return new ResponseEntity<List<Book>>(listBooks, HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -151,7 +147,7 @@ public class BookServiceImpl implements BookService {
 	@Override
 	public ResponseEntity<List<String>> getSuggestion() {
 		try {
-			List<Book> listBooks = bookDao.getAllBooks();
+			List<Book> listBooks = bookDao.findAll();
 			//
 			List<String> listSuggest = new ArrayList<String>();
 
