@@ -11,11 +11,11 @@ import com.pojo.Ratings;
 @Repository
 public interface RatingsDao extends JpaRepository<Ratings, Integer> {
 
-	@Query(value = "SELECT COUNT(*) FROM ratings WHERE user_id = :userId AND book_id = :bookId", nativeQuery = true)
-	Integer countByUserAndBook(@Param("userId") Integer userId, @Param("bookId") Integer bookId);
-
-	default boolean existsByUserAndBook(@Param("userId") Integer userId, @Param("bookId") Integer bookId) {
-	    return countByUserAndBook(userId, bookId) > 0;
-	}
+//	@Query(value = "SELECT COUNT(*) FROM ratings WHERE user_id = :userId AND book_id = :bookId", nativeQuery = true)
+//	Integer countByUserAndBook(@Param("userId") Integer userId, @Param("bookId") Integer bookId);
+//
+//	default boolean existsByUserAndBook(@Param("userId") Integer userId, @Param("bookId") Integer bookId) {
+//	    return countByUserAndBook(userId, bookId) > 0;
+//	}
 	
 }

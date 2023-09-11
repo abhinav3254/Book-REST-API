@@ -29,4 +29,35 @@ public class Cart {
 	
 	@OneToOne
 	private User user;
+
+	// getter and setters
+	
+	public Integer getId() {
+		return id;
+	}
+
+	public List<CartItem> getCartItems() {
+		return cartItems;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public void setCartItems(List<CartItem> cartItems) {
+		this.cartItems = cartItems;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+	
+
+	
+	
 }
+

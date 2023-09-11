@@ -1,15 +1,14 @@
 package com.pojo;
 
 
-
-
-import java.time.LocalDate;
+import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,23 +25,31 @@ public class Author {
 	
 	private String authorName;
 	
-	private LocalDate dateOfBirth;
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date dateOfBirth;
 
-	// getter and setters
+	private String nationality;
+	
+	private String gender;
+
 	public Integer getId() {
 		return id;
 	}
 
-	public LocalDate getDateOfBirth() {
+	public String getAuthorName() {
+		return authorName;
+	}
+
+	public Date getDateOfBirth() {
 		return dateOfBirth;
 	}
 
-	public void setDateOfBirth(LocalDate localDate) {
-		this.dateOfBirth = localDate;
+	public String getNationality() {
+		return nationality;
 	}
 
-	public String getAuthorName() {
-		return authorName;
+	public String getGender() {
+		return gender;
 	}
 
 	public void setId(Integer id) {
@@ -52,5 +59,19 @@ public class Author {
 	public void setAuthorName(String authorName) {
 		this.authorName = authorName;
 	}
+
+	public void setDateOfBirth(Date dateOfBirth) {
+		this.dateOfBirth = dateOfBirth;
+	}
+
+	public void setNationality(String nationality) {
+		this.nationality = nationality;
+	}
+
+	public void setGender(String gender) {
+		this.gender = gender;
+	}
+	
+	
 	
 }

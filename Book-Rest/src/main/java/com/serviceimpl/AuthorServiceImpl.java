@@ -1,7 +1,9 @@
 package com.serviceimpl;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -49,8 +51,11 @@ public class AuthorServiceImpl implements AuthorService {
 			
 			author.setAuthorName(map.get("name"));
 			String dateOfBirth = map.get("dob");
-			LocalDate localDate = LocalDate.parse(dateOfBirth,DateTimeFormatter.ISO_DATE);
-			author.setDateOfBirth(localDate);
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+			Date date = dateFormat.parse(dateOfBirth);
+			author.setDateOfBirth(date);
+			author.setGender(map.get("gender"));
+			author.setNationality("country");
 			
 			return author;
 		} catch (Exception e) {

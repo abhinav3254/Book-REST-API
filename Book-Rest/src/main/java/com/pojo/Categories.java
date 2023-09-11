@@ -13,6 +13,8 @@ public class Categories {
 	private Integer id;
 	
 	private String categoryName;
+	
+	// getter and setters
 
 	public Integer getId() {
 		return id;
@@ -29,4 +31,7 @@ public class Categories {
 	public void setCategoryName(String categoryName) {
 		this.categoryName = categoryName;
 	}
+	
+	
+	
 }
