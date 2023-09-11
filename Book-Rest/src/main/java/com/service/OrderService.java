@@ -11,4 +11,6 @@ public interface OrderService {
 	public ResponseEntity<String> placeOrder(Map<String, String>map);
 	
 	public ResponseEntity<List<Orders>> getAllOrders();
+	
+	public ResponseEntity<List<Orders>> getAllTheOrdersPlaced();
 }

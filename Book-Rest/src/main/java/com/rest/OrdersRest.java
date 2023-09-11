@@ -20,4 +20,7 @@ public interface OrdersRest {
 	@GetMapping("/all")
 	public ResponseEntity<List<Orders>> getAllOrder();
 	
+	@GetMapping("/show/all")
+	public ResponseEntity<List<Orders>> getAllTheOrdersPlaced();
+	
 }

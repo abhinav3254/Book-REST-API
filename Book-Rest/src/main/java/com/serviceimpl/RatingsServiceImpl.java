@@ -43,8 +43,10 @@ public class RatingsServiceImpl implements RatingsService {
 		try {
 			
 			// Extract the required data from the map
+			System.out.println(map.get("comment")+" ------------------------------> map abhinav");
 						Integer bookId = Integer.parseInt(map.get("bookId"));
 						Double ratingValue = Double.parseDouble(map.get("rating"));
+						String comments = map.get("comment");
 
 						// Get the authenticated user
 						Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -62,6 +64,7 @@ public class RatingsServiceImpl implements RatingsService {
 							ratings.setRating(ratingValue);
 							ratings.setUser(user);
 							ratings.setRatingPostDate(new Date());
+							ratings.setComment(comments);
 
 							// Save the rating
 							ratingsDao.save(ratings);

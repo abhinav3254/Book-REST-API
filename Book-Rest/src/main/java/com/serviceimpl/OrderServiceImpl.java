@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +19,7 @@ import com.dao.CartItemDao;
 import com.dao.OrdersDao;
 import com.dao.PaymentDao;
 import com.dao.UserDao;
+import com.jwt.JwtFilter;
 import com.jwt.JwtUtils;
 import com.pojo.Book;
 import com.pojo.Cart;
@@ -44,6 +44,9 @@ public class OrderServiceImpl implements OrderService {
 	
 	@Autowired
 	private CartDao cartDao;
+	
+	@Autowired
+	private JwtFilter jwtFilter;
 	
 	
 	@Autowired
@@ -133,6 +136,22 @@ public class OrderServiceImpl implements OrderService {
 			List<Orders> listOrders = ordersDao.getAllOrders(user.getId().toString());
 
 			return new ResponseEntity<List<Orders>>(listOrders,HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return new ResponseEntity<List<Orders>>(HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+
+
+	@Override
+	public ResponseEntity<List<Orders>> getAllTheOrdersPlaced() {
+		try {
+			if (jwtFilter.isAdmin()) {
+				List<Orders> listOrders = ordersDao.findAll();
+				return new ResponseEntity<List<Orders>>(listOrders,HttpStatus.OK);
+			} else {
+				return new ResponseEntity<List<Orders>>(HttpStatus.UNAUTHORIZED);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

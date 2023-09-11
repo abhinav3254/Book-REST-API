@@ -28,10 +28,20 @@ public class Ratings {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date ratingPostDate;
 	
+	private String comment;
+	
 	// getter and setters
 
 	public Integer getId() {
 		return id;
+	}
+
+	public String getComment() {
+		return comment;
+	}
+
+	public void setComment(String comment) {
+		this.comment = comment;
 	}
 
 	public Double getRating() {

@@ -39,6 +39,16 @@ public class OrderRestImpl implements OrdersRest {
 		}
 		return new ResponseEntity<List<Orders>>(HttpStatus.INTERNAL_SERVER_ERROR);
 	}
+
+	@Override
+	public ResponseEntity<List<Orders>> getAllTheOrdersPlaced() {
+		try {
+			return orderService.getAllTheOrdersPlaced();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return new ResponseEntity<List<Orders>>(HttpStatus.INTERNAL_SERVER_ERROR);
+	}
 	
 	
 
