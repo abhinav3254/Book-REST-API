@@ -24,6 +24,6 @@ public interface CartItemDao extends JpaRepository<CartItem, Integer> {
 	@Transactional
 	@Modifying
 	@Query(nativeQuery = true,value = "delete from cart_item where user_id =:userId")
-	public List<CartItem> deleteAllItemsFromCartByUserId(Integer userId);
+	public void deleteAllItemsFromCartByUserId(Integer userId);
 
 }

@@ -1,5 +1,6 @@
 package com.serviceimpl;
 
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -49,22 +50,37 @@ public class CartItemServiceImpl implements CartItemService {
 
 //			Find that if book exists already if yes then increase the quantity else add the book
 			CartItem cartItem2 = cartItemDao.findBookInCartItem(book.get().getId(),user.getId());
-
+			
+			DecimalFormat df = new DecimalFormat("#.##");
+			
 			if (Objects.isNull(cartItem2)) {
 				CartItem cartItem = new CartItem();
 				cartItem.setBook(book.get());
 				cartItem.setQuantity(1);
 				Double price = Double.parseDouble(book.get().getPrice());
-				cartItem.setBookPrice(price);
+				String formattedValueprice = df.format(price);
+				double roundedValueprice = Double.parseDouble(formattedValueprice);
+				cartItem.setBookPrice(roundedValueprice);
 				cartItem.setUser(user);
 				Double cgst = price + (0.18 * price);
-				cartItem.setCgst(cgst);
-				cartItem.setSgst(cgst);
+				String formattedValuecgst = df.format(cgst);
+				double roundedValuecgst = Double.parseDouble(formattedValuecgst);
+				
+				cartItem.setCgst(roundedValuecgst);
+				cartItem.setSgst(roundedValuecgst);
 				Double discount = price + (0.10 * price);
-				cartItem.setDiscount(discount);
+				String formattedValuediscount = df.format(discount);
+				double roundedValuediscount = Double.parseDouble(formattedValuediscount);
+				
+				cartItem.setDiscount(roundedValuediscount);
 
-				Double finalPrice = (cgst + cgst + price) - discount;
-				cartItem.setFinalPrice(finalPrice);
+				Double finalPrice = (roundedValuecgst + roundedValuecgst + roundedValueprice) - roundedValuediscount;
+				
+				String formattedValuefinalPrice = df.format(finalPrice);
+				double roundedValuefinalPrice = Double.parseDouble(formattedValuefinalPrice);
+				
+				
+				cartItem.setFinalPrice(roundedValuefinalPrice);
 
 				cartItemDao.save(cartItem);
 			} else {
@@ -189,6 +205,27 @@ public class CartItemServiceImpl implements CartItemService {
 			e.printStackTrace();
 		}
 		return new ResponseEntity<Double>(HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+
+	@Override
+	public ResponseEntity<String> deleteAll() {
+		try {
+			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+			String token = auth.getName();
+
+			String username = jwtUtils.extractUsername(token);
+
+			User user = userDao.getUserByUserName(username);
+			
+			cartItemDao.deleteAllItemsFromCartByUserId(user.getId());
+			
+			return new ResponseEntity<String>(HttpStatus.OK);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
 }

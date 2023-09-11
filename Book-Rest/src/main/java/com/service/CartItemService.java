@@ -19,5 +19,7 @@ public interface CartItemService {
 	public ResponseEntity<String> deleteItem(String cartItemId);
 	
 	public ResponseEntity<Double> getSumOfAllFinalPrice();
+	
+	public ResponseEntity<String> deleteAll();
 
 }

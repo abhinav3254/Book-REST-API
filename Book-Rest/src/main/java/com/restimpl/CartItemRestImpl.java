@@ -79,6 +79,16 @@ public class CartItemRestImpl implements CartItemRest {
 		}
 		return new ResponseEntity<Double>(HttpStatus.INTERNAL_SERVER_ERROR);
 	}
+
+	@Override
+	public ResponseEntity<String> deleteAll() {
+		try {
+			return cartItemService.deleteAll();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
+	}
 	
 	
 

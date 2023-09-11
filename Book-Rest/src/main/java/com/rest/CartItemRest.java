@@ -36,6 +36,9 @@ public interface CartItemRest {
 	
 	@GetMapping("/totalPriceSum")
 	public ResponseEntity<Double> getSumOfAllFinalPrice();
+	
+	@GetMapping("/deleteAll")
+	public ResponseEntity<String> deleteAll();
 
 	
 }
