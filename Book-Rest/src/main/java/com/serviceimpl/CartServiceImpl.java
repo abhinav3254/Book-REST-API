@@ -48,6 +48,16 @@ public class CartServiceImpl implements CartService {
 			
 			List<CartItem> listCartItems = cartItemDao.getAllItemsFromCart(user.getId());
 			
+			
+			// checking every item quantity
+			for(int i = 0 ;i<listCartItems.size();i++) {
+				if (listCartItems.get(i).getBook().getBookQuantity()>=listCartItems.get(i).getQuantity()) {
+					// do nothing
+				} else {
+					return new ResponseEntity<String>(listCartItems.get(i).getBook().getTitle()+" this book quantity issue \n Book can't be ordered..",HttpStatus.BAD_REQUEST);
+				}
+			}
+			
 			Cart cart = new Cart();
 			
 			cart.setCartItems(listCartItems);

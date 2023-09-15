@@ -53,6 +53,10 @@ public class Book {
 	
 	@OneToMany
 	private List<Ratings> listRatings;
+	
+//	For Inventory
+	
+	private Integer bookQuantity;
 
 	
 	// getter and setters

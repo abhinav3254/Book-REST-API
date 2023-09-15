@@ -109,7 +109,7 @@ public class OrderServiceImpl implements OrderService {
 	            cartItemDao.save(cartItem); // Update each cart item in the database
 	        }
 	        
-	     // Assuming you have a Cart object called "cart"
+	    
 	        cart.setUser(null); // Set the user to null
 	        cartDao.save(cart); // Update the cart in the database
 
@@ -157,5 +157,28 @@ public class OrderServiceImpl implements OrderService {
 		}
 		return new ResponseEntity<List<Orders>>(HttpStatus.INTERNAL_SERVER_ERROR);
 	}
+
+	
+//	For refund
+
+	@Override
+	public ResponseEntity<List<Orders>> getAllRefund() {
+		try {
+			Authentication authentication = SecurityContextHolder. getContext(). getAuthentication();
+			String token = authentication.getName();
+			
+			String username = jwtUtils.extractUsername(token);
+			
+			User user = userDao.getUserByUserName(username);
+			List<Orders> list = ordersDao.getRefund(user.getId());
+			return new ResponseEntity<List<Orders>>(list,HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return new ResponseEntity<List<Orders>>(HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+	
+
+	
 
 }

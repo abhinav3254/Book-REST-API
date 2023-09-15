@@ -92,6 +92,8 @@ public class BookServiceImpl implements BookService {
 
 			Date date = dateFormat.parse(dateString);
 			System.out.println(date);
+			
+			book.setBookQuantity(1);
 
 			book.setPublishDate(date);
 
@@ -130,9 +132,9 @@ public class BookServiceImpl implements BookService {
 	@Override
 	public ResponseEntity<Book> getBookById(String id) {
 		try {
-			System.out.println("ABhinav Id is :- " + id);
+			
 			Optional<Book> book = bookDao.findById(Integer.parseInt(id));
-			System.out.println(book.get());
+			
 			if (Objects.isNull(book.get())) {
 				return new ResponseEntity<Book>(HttpStatus.BAD_REQUEST);
 			} else {
@@ -176,6 +178,31 @@ public class BookServiceImpl implements BookService {
 			e.printStackTrace();
 		}
 		return new ResponseEntity<List<Book>>(HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+
+	@Override
+	public ResponseEntity<String> updateQuantity(Map<String, String> map) {
+		try {
+			
+			System.out.println("called this one -----------");
+			Integer bookId = Integer.parseInt(map.get("bookId"));
+			Optional<Book> bookOptional = bookDao.findById(bookId);
+			Book book = bookOptional.get();
+			
+			Integer quantity = Integer.parseInt(map.get("quantity"));
+			
+			book.setBookQuantity(quantity);
+			
+			System.out.println(" book quantity ----->  "+book.getBookQuantity());
+			
+			bookDao.save(book);
+			
+			return new ResponseEntity<String>(HttpStatus.OK);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
 }

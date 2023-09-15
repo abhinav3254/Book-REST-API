@@ -11,6 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import com.constants.Constants;
 import com.dao.BookDao;
 import com.dao.CartItemDao;
 import com.dao.UserDao;
@@ -38,7 +39,7 @@ public class CartItemServiceImpl implements CartItemService {
 	@Override
 	public ResponseEntity<String> addToCartItem(String bookId) {
 		try {
-			System.out.println("Here comes Baby" + bookId);
+			
 			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 			
 			String token = auth.getName();
@@ -125,18 +126,30 @@ public class CartItemServiceImpl implements CartItemService {
 	@Override
 	public ResponseEntity<String> incrementItem(String cartItemId) {
 		try {
+			
 			Optional<CartItem> cartItemOptional = cartItemDao.findById(Integer.parseInt(cartItemId));
+			
+			Optional<Book> book = bookDao.findById(cartItemOptional.get().getBook().getId());
 
+			Integer bookQuantityInInventory = book.get().getBookQuantity();
+			
+			
 			CartItem cartItem = cartItemOptional.get();
+			
+			if (cartItem.getQuantity()<bookQuantityInInventory) {
+				Integer quantity = cartItem.getQuantity() + 1;
 
-			Integer quantity = cartItem.getQuantity() + 1;
+				cartItem.setQuantity(quantity);
 
-			cartItem.setQuantity(quantity);
+				cartItemDao.save(cartItem);
 
-			cartItemDao.save(cartItem);
+				return new ResponseEntity<String>("Incremented", HttpStatus.OK);
 
-			return new ResponseEntity<String>("Incremented", HttpStatus.OK);
+			} else {
+				return new ResponseEntity<String>(Constants.designMessage("INSUFFICIENT_STORAGE"),HttpStatus.BAD_REQUEST);
+			}
 
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

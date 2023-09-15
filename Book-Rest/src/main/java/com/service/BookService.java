@@ -21,4 +21,6 @@ public interface BookService {
 	
 	public ResponseEntity<List<Book>> getBookByCategory(String category);
 	
+	public ResponseEntity<String> updateQuantity(Map<String, String>map);
+	
 }

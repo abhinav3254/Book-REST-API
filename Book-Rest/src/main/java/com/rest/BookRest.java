@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,5 +33,8 @@ public interface BookRest {
 	
 	@GetMapping("/category/{category}")
 	public ResponseEntity<List<Book>> getBookByCategory(@PathVariable String category);
+	
+	@PostMapping("/updateQuantity")
+	public ResponseEntity<String> updateQuantity(@RequestBody(required = true)Map<String, String>map);
 	
 }
