@@ -37,4 +37,7 @@ public interface BookRest {
 	@PostMapping("/updateQuantity")
 	public ResponseEntity<String> updateQuantity(@RequestBody(required = true)Map<String, String>map);
 	
+	@GetMapping("/upcomingBooks")
+	public ResponseEntity<List<Book>> getUpcomingBooks();
+	
 }

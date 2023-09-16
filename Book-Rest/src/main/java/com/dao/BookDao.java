@@ -27,5 +27,10 @@ public interface BookDao extends JpaRepository<Book, Integer> {
 	@Query(nativeQuery = true,value = "select * from book where category like %:value%")
 	public List<Book> findBookByCategory(String value);
 	
+	// for future publish book date
+	
+	@Query(nativeQuery = true,value = "SELECT * FROM book WHERE publish_date > NOW()")
+	public List<Book> upcomingBooks();
+	
 	
 }

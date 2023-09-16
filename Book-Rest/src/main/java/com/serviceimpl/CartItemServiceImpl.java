@@ -61,25 +61,27 @@ public class CartItemServiceImpl implements CartItemService {
 				Double price = Double.parseDouble(book.get().getPrice());
 				String formattedValueprice = df.format(price);
 				double roundedValueprice = Double.parseDouble(formattedValueprice);
+				System.out.println("roundedValueprice --> "+roundedValueprice);
 				cartItem.setBookPrice(roundedValueprice);
 				cartItem.setUser(user);
-				Double cgst = price + (0.18 * price);
+				Double cgst = (0.18 * price);
 				String formattedValuecgst = df.format(cgst);
 				double roundedValuecgst = Double.parseDouble(formattedValuecgst);
-				
+				System.out.println("roundedValuecgst --> "+roundedValuecgst);
 				cartItem.setCgst(roundedValuecgst);
 				cartItem.setSgst(roundedValuecgst);
-				Double discount = price + (0.10 * price);
+				Double discount = (0.10 * price);
+				
 				String formattedValuediscount = df.format(discount);
 				double roundedValuediscount = Double.parseDouble(formattedValuediscount);
-				
+				System.out.println("roundedValuediscount --> "+roundedValuediscount);
 				cartItem.setDiscount(roundedValuediscount);
 
 				Double finalPrice = (roundedValuecgst + roundedValuecgst + roundedValueprice) - roundedValuediscount;
 				
 				String formattedValuefinalPrice = df.format(finalPrice);
 				double roundedValuefinalPrice = Double.parseDouble(formattedValuefinalPrice);
-				
+				System.out.println("roundedValuefinalPrice --> "+roundedValuefinalPrice);
 				
 				cartItem.setFinalPrice(roundedValuefinalPrice);
 

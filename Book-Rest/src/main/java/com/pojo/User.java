@@ -40,6 +40,8 @@ public class User {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastLogin;
 	
+	
+	
 	// getter and setters
 
 	public Integer getId() {

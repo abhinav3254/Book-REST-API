@@ -49,6 +49,7 @@ public class CartServiceImpl implements CartService {
 			List<CartItem> listCartItems = cartItemDao.getAllItemsFromCart(user.getId());
 			
 			
+			// Manage the quantity of the book quantity here before adding it to the cart
 			// checking every item quantity
 			for(int i = 0 ;i<listCartItems.size();i++) {
 				if (listCartItems.get(i).getBook().getBookQuantity()>=listCartItems.get(i).getQuantity()) {

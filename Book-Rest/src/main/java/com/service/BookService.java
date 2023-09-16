@@ -23,4 +23,6 @@ public interface BookService {
 	
 	public ResponseEntity<String> updateQuantity(Map<String, String>map);
 	
+	public ResponseEntity<List<Book>> getUpcomingBooks();
+	
 }

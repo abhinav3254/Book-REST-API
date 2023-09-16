@@ -93,7 +93,7 @@ public class BookServiceImpl implements BookService {
 			Date date = dateFormat.parse(dateString);
 			System.out.println(date);
 			
-			book.setBookQuantity(1);
+			book.setBookQuantity(0);
 
 			book.setPublishDate(date);
 
@@ -203,6 +203,18 @@ public class BookServiceImpl implements BookService {
 			e.printStackTrace();
 		}
 		return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+
+	@Override
+	public ResponseEntity<List<Book>> getUpcomingBooks() {
+		try {
+			List<Book> book = bookDao.upcomingBooks();
+			
+			return new ResponseEntity<List<Book>>(book,HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return new ResponseEntity<List<Book>>(HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
 }

@@ -112,6 +112,9 @@ public class UserServiceImpl implements UserService {
 	public ResponseEntity<String> logIn(Map<String, String> requestMap) {
 		try {
 			User user = userDao.getUserByUserName(requestMap.get("username"));
+			System.out.println("_____________user here______________");
+			System.out.println(user.toString());
+			
 			if (Objects.isNull(user)) {
 				return new ResponseEntity<String>(Constants.designMessage("user not found"),HttpStatus.BAD_REQUEST); 
 			} else {
