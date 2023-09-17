@@ -68,14 +68,21 @@ public class OrderServiceImpl implements OrderService {
 
 			// first add items in the cart then place order
 			cartServiceImpl.addToCart();
+			
 
 			// obtain the currently authenticated user
 			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 			String userToken = authentication.getName();
 			String username = jwtUtils.extractUsername(userToken);
 			User user = userDao.getUserByUserName(username);
+			
+			// upto this find the current logged in user
 
-			Cart cart = cartDao.getCartByUserId(user.getId());
+			List<Cart> cartList = cartDao.getCartByUserId(user.getId());
+			
+			System.out.println("Cart List Size is :- "+cartList.size());
+			Cart cart = cartList.get(0);
+			
 
 			Payment payment = paymentDao.getAllPaymentByUser(user.getId());
 

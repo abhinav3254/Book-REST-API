@@ -41,11 +41,15 @@ public class CartServiceImpl implements CartService {
 	@Override
 	public ResponseEntity<String> addToCart() {
 		try {
+			
+			// to get the currently logged in user
 			Authentication auth = SecurityContextHolder.getContext().getAuthentication();;
 			String token = auth.getName();
 			String username = jwtUtils.extractUsername(token);
 			User user = userDao.getUserByUserName(username);
 			
+			
+			// finding all the cart items of a particular user
 			List<CartItem> listCartItems = cartItemDao.getAllItemsFromCart(user.getId());
 			
 			

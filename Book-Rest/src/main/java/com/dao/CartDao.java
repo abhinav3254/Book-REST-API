@@ -31,6 +31,6 @@ public interface CartDao extends JpaRepository<Cart, Integer> {
 	*/
 	
 	@Query(nativeQuery = true,value = "select * from cart where user_id=:uid")
-	public Cart getCartByUserId(Integer uid);
+	public List<Cart> getCartByUserId(Integer uid);
 	
 }
