@@ -1,10 +1,8 @@
 package com.serviceimpl;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,7 +12,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.constants.Constants;
 import com.dao.BookDao;
 import com.dao.CartDao;
 import com.dao.CartItemDao;
@@ -61,14 +58,16 @@ public class OrderServiceImpl implements OrderService {
 
 	@Autowired
 	private CartServiceImpl cartServiceImpl;
-
+	
+	/*
+	 * This method basically place the order 
+	 * if addTocart returns true then only this method will be executed
+	 * 
+	 * 
+	 * */
 	@Override
 	public ResponseEntity<String> placeOrder(Map<String, String> map) {
 		try {
-
-			// first add items in the cart then place order
-			cartServiceImpl.addToCart();
-			
 
 			// obtain the currently authenticated user
 			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -78,70 +77,98 @@ public class OrderServiceImpl implements OrderService {
 			
 			// upto this find the current logged in user
 
-			List<Cart> cartList = cartDao.getCartByUserId(user.getId());
 			
-			System.out.println("Cart List Size is :- "+cartList.size());
-			Cart cart = cartList.get(0);
+			// first add items in the cart then place order
+			Boolean ans = cartServiceImpl.addToCart2();
 			
+			if (ans) {
+				
 
-			Payment payment = paymentDao.getAllPaymentByUser(user.getId());
+				
+				List<Cart> cartList = cartDao.getCartByUserId(user.getId());
+				
+				System.out.println("Cart List Size is :- "+cartList.size());
+				Cart cart = cartList.get(0);
+				
 
-			String address = map.get("address");
+				Payment payment = paymentDao.getAllPaymentByUser(user.getId());
 
-			Orders orders = new Orders();
+				String address = map.get("address");
 
-			orders.setOrderDate(LocalDateTime.now());
+				Orders orders = new Orders();
 
-			orders.setCart(cart);
-			orders.setUser(user);
-			orders.setAddress(address);
-			orders.setPayment(payment);
+				orders.setOrderDate(LocalDateTime.now());
 
-			ordersDao.save(orders);
+				orders.setCart(cart);
+				orders.setUser(user);
+				orders.setAddress(address);
+				orders.setPayment(payment);
 
-			// here doing cart manage
+				ordersDao.save(orders);
 
-			System.out.println(" -- > here is the cart items size :-- " + cart.getCartItems().size());
+				// here doing cart manage
 
-			List<CartItem> newList = cart.getCartItems();
+				System.out.println(" -- > here is the cart items size :-- " + cart.getCartItems().size());
 
-			for (int i = 0; i < newList.size(); i++) {
-				int inCartQuantityOfABook = newList.get(i).getQuantity();
-				Book book1 = newList.get(i).getBook();
-				book1.setBookQuantity(book1.getBookQuantity() - inCartQuantityOfABook);
-				bookDao.save(book1);
+				List<CartItem> newList = cart.getCartItems();
+
+				for (int i = 0; i < newList.size(); i++) {
+					int inCartQuantityOfABook = newList.get(i).getQuantity();
+					Book book1 = newList.get(i).getBook();
+					book1.setBookQuantity(book1.getBookQuantity() - inCartQuantityOfABook);
+					bookDao.save(book1);
+				}
+
+				// here my cart manage ends
+
+				// Get the user ID
+				Integer userId = user.getId();
+
+				// Retrieve the payment and cart items for the user
+				Payment payment2 = paymentDao.getAllPaymentByUser(userId);
+				List<CartItem> cartItems = cartItemDao.getAllItemsFromCart(userId);
+
+				// Set user details to null for payment
+				if (payment2 != null) {
+					payment2.setUser(null);
+					paymentDao.save(payment2); // Update the payment in the database
+				}
+
+				// Set user details to null for each cart item
+				for (CartItem cartItem : cartItems) {
+					cartItem.setUser(null);
+					cartItemDao.save(cartItem); // Update each cart item in the database
+				}
+
+				cart.setUser(null); // Set the user to null
+				cartDao.save(cart); // Update the cart in the database
+
+				return new ResponseEntity<String>("ORDER PLACED", HttpStatus.OK);
+			} else {
+				// for not added to cart
+				
+				// first delete the user payment
+				
+				paymentDao.deletePaymentByUserId(user.getId());
+				
+				// second delete the refernce of user in cart_item table
+				
+				cartItemDao.deleteAllItemsFromCartByUserId(user.getId());
+				
+				return new ResponseEntity<String>("ORDER CAN'T BE PLACED",HttpStatus.BAD_REQUEST);
 			}
 
-			// here my cart manage ends
-
-			// Get the user ID
-			Integer userId = user.getId();
-
-			// Retrieve the payment and cart items for the user
-			Payment payment2 = paymentDao.getAllPaymentByUser(userId);
-			List<CartItem> cartItems = cartItemDao.getAllItemsFromCart(userId);
-
-			// Set user details to null for payment
-			if (payment2 != null) {
-				payment2.setUser(null);
-				paymentDao.save(payment2); // Update the payment in the database
-			}
-
-			// Set user details to null for each cart item
-			for (CartItem cartItem : cartItems) {
-				cartItem.setUser(null);
-				cartItemDao.save(cartItem); // Update each cart item in the database
-			}
-
-			cart.setUser(null); // Set the user to null
-			cartDao.save(cart); // Update the cart in the database
-
-			return new ResponseEntity<String>("ORDER PLACED", HttpStatus.OK);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ResponseEntity<String>("Error placing order", HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
+	
+	
+	/*
+	 * This method returns List of Orders of a user which is currently
+	 * logged in
+	 * */
 
 	@Override
 	public ResponseEntity<List<Orders>> getAllOrders() {
@@ -177,17 +204,19 @@ public class OrderServiceImpl implements OrderService {
 		return new ResponseEntity<List<Orders>>(HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
-//	For refund
 
+	/*
+	 * This method is basically for refund status
+	 * */
 	@Override
 	public ResponseEntity<List<Orders>> getAllRefund() {
 		try {
 			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 			String token = authentication.getName();
-
 			String username = jwtUtils.extractUsername(token);
-
 			User user = userDao.getUserByUserName(username);
+			
+			
 			List<Orders> list = ordersDao.getRefund(user.getId());
 			return new ResponseEntity<List<Orders>>(list, HttpStatus.OK);
 		} catch (Exception e) {

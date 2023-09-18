@@ -18,6 +18,6 @@ public interface PaymentDao extends JpaRepository<Payment, Integer> {
 	@Transactional
 	@Modifying
 	@Query(nativeQuery = true,value = "delete from payment where user_id =:uid")
-	public Payment deletePaymentByUserId(Integer uid);
+	void deletePaymentByUserId(Integer uid);
 
 }

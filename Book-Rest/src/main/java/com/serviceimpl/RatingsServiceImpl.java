@@ -37,61 +37,64 @@ public class RatingsServiceImpl implements RatingsService {
 	@Autowired
 	private BookDao bookDao;
 
+	
+	/*
+	 * This method is used to add the rating of the book
+	 * */
 	@Override
 	public ResponseEntity<String> addRating(Map<String, String> map) {
-		
+
 		try {
-			
+
 			// Extract the required data from the map
-			System.out.println(map.get("comment")+" ------------------------------> map abhinav");
-						Integer bookId = Integer.parseInt(map.get("bookId"));
-						Double ratingValue = Double.parseDouble(map.get("rating"));
-						String comments = map.get("comment");
+			Integer bookId = Integer.parseInt(map.get("bookId"));
+			Double ratingValue = Double.parseDouble(map.get("rating"));
+			String comments = map.get("comment");
 
-						// Get the authenticated user
-						Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-						String userToken = authentication.getName();
-						String username = jwtUtils.extractUsername(userToken);
-						User user = userDao.getUserByUserName(username);
+			// Get the authenticated user
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+			String userToken = authentication.getName();
+			String username = jwtUtils.extractUsername(userToken);
+			User user = userDao.getUserByUserName(username);
 
-						// Check if the book exists
-						Optional<Book> optionalBook = bookDao.findById(bookId);
-						if (optionalBook.isPresent()) {
-							Book book = optionalBook.get();
+			// Check if the book exists
+			Optional<Book> optionalBook = bookDao.findById(bookId);
+			if (optionalBook.isPresent()) {
+				Book book = optionalBook.get();
 
-							// Create a new rating
-							Ratings ratings = new Ratings();
-							ratings.setRating(ratingValue);
-							ratings.setUser(user);
-							ratings.setRatingPostDate(new Date());
-							ratings.setComment(comments);
+				// Create a new rating
+				Ratings ratings = new Ratings();
+				ratings.setRating(ratingValue);
+				ratings.setUser(user);
+				ratings.setRatingPostDate(new Date());
+				ratings.setComment(comments);
 
-							// Save the rating
-							ratingsDao.save(ratings);
+				// Save the rating
+				ratingsDao.save(ratings);
 
-							// Add the rating to the book's list of ratings
-							List<Ratings> existingRatings = book.getListRatings();
-							existingRatings.add(ratings);
-							book.setListRatings(existingRatings);
+				// Add the rating to the book's list of ratings
+				List<Ratings> existingRatings = book.getListRatings();
+				existingRatings.add(ratings);
+				book.setListRatings(existingRatings);
 
-							// Calculate and update the average rating for the book
-							double sum = 0.0;
-							for (Ratings r : existingRatings) {
-								sum += r.getRating();
-							}
-							double averageRating = existingRatings.isEmpty() ? 0.0 : sum / existingRatings.size();
-							DecimalFormat df = new DecimalFormat("#.#");
-							String formattedValue = df.format(averageRating);
-							double roundedValue = Double.parseDouble(formattedValue);
-							book.setAverageRating(roundedValue);
+				// Calculate and update the average rating for the book
+				double sum = 0.0;
+				for (Ratings r : existingRatings) {
+					sum += r.getRating();
+				}
+				double averageRating = existingRatings.isEmpty() ? 0.0 : sum / existingRatings.size();
+				DecimalFormat df = new DecimalFormat("#.#");
+				String formattedValue = df.format(averageRating);
+				double roundedValue = Double.parseDouble(formattedValue);
+				book.setAverageRating(roundedValue);
 
-							// Save the updated book with the average rating
-							bookDao.save(book);
+				// Save the updated book with the average rating
+				bookDao.save(book);
 
-							return new ResponseEntity<String>("Rating added successfully", HttpStatus.OK);
-						
-						}
-						return new ResponseEntity<String>("Error adding rating", HttpStatus.INTERNAL_SERVER_ERROR);
+				return new ResponseEntity<String>("Rating added successfully", HttpStatus.OK);
+
+			}
+			return new ResponseEntity<String>("Error adding rating", HttpStatus.INTERNAL_SERVER_ERROR);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

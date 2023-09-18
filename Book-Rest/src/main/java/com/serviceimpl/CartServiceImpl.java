@@ -37,7 +37,11 @@ public class CartServiceImpl implements CartService {
 	@Autowired
 	private CartItemDao cartItemDao;
 	
-
+	
+	/*
+	 * 
+	 * This method is for testing and checking purpose
+	 * */
 	@Override
 	public ResponseEntity<String> addToCart() {
 		try {
@@ -55,21 +59,21 @@ public class CartServiceImpl implements CartService {
 			
 			
 			// check the quantity here if user has added more items in the cart or not
-			
-			
-			
-			
-			
 			// Manage the quantity of the book quantity here before adding it to the cart
 			// checking every item quantity
 			for(int i = 0 ;i<listCartItems.size();i++) {
-//				if (listCartItems.get(i).getBook().getBookQuantity()>=listCartItems.get(i).getQuantity()) {
-//					throw new RuntimeException("QUANTITY EXCEED AS COMPARED TO INVENTORY");
-//				} else
-				if (listCartItems.get(i).getBook().getBookQuantity()>=listCartItems.get(i).getQuantity()) {
-					// do nothing
+				int backendQuantity = listCartItems.get(i).getBook().getBookQuantity();
+				int frontEndQuantity = listCartItems.get(i).getQuantity();
+				System.out.println("From Backend :- "+listCartItems.get(i).getBook().getBookQuantity());
+				System.out.println("From frontend :- "+listCartItems.get(i).getQuantity());
+				if (backendQuantity<frontEndQuantity) {
+					return new ResponseEntity<String>("Can't Place Order",HttpStatus.BAD_REQUEST);
 				} else {
-					return new ResponseEntity<String>(listCartItems.get(i).getBook().getTitle()+" this book quantity issue \n Book can't be ordered..",HttpStatus.BAD_REQUEST);
+					if (listCartItems.get(i).getBook().getBookQuantity()>=listCartItems.get(i).getQuantity()) {
+						// do nothing
+					} else {
+						return new ResponseEntity<String>(listCartItems.get(i).getBook().getTitle()+" this book quantity issue \n Book can't be ordered..",HttpStatus.BAD_REQUEST);
+					}
 				}
 			}
 			
@@ -97,4 +101,72 @@ public class CartServiceImpl implements CartService {
 		return new ResponseEntity<String>(Constants.designMessage("SOMETHING WENT WRONG"),
 				HttpStatus.INTERNAL_SERVER_ERROR);
 	}
+	
+	
+	/*
+	 * 
+	 * This method will add all the items to the cart
+	 * IMPORTANT Feature of this method :- 
+	 * This method will basically manage the 
+	 * quantity of the cart_items
+	 * 
+	 * If back end will have less quantity than what front end is asking
+	 * it will return false and if everything is correct then it
+	 * will return true 
+	 * 
+	 * */
+	public Boolean addToCart2() {
+		System.out.println("Adding elements to the cart");
+
+		// Get the currently logged in user
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		String token = auth.getName();
+		String username = jwtUtils.extractUsername(token);
+		User user = userDao.getUserByUserName(username);
+
+		// Find all the cart items of a particular user
+		List<CartItem> listCartItems = cartItemDao.getAllItemsFromCart(user.getId());
+
+		// Check the quantity here if the user has added more items in the cart than available
+		boolean flag = true; // Initialize flag to true
+
+		// Check the quantity for each item in the cart
+		for (int i = 0; i < listCartItems.size(); i++) {
+		    int backendQuantity = listCartItems.get(i).getBook().getBookQuantity();
+		    int frontEndQuantity = listCartItems.get(i).getQuantity();
+		    System.out.println("From Backend: " + backendQuantity);
+		    System.out.println("From frontend: " + frontEndQuantity);
+
+		    if (backendQuantity < frontEndQuantity) {
+		        // If the quantity in the cart exceeds the available quantity, set flag to false and break the loop
+		        flag = false;
+		        break;
+		    }
+		}
+
+		if (flag) {
+		    // Create a new cart and save it
+		    Cart cart = new Cart();
+		    cart.setCartItems(listCartItems);
+		    cart.setUser(user);
+		    cartDao.save(cart);
+
+		    System.out.println("Removing reference of userid");
+		    
+		    // Remove the reference of user so that it doesn't display every time
+		    for (int i1 = 0; i1 < listCartItems.size(); i1++) {
+		        CartItem cartItem = listCartItems.get(i1);
+		        cartItem.setUser(null); // Set the user to null
+		        cartItemDao.save(cartItem); // Update the cart item in the database
+		    }
+		    
+		    System.out.println("Added to Cart Implementation done");
+		    return true;
+		} else {
+		    // Quantity check failed, return false
+		    return false;
+		}
+
+	}
+	
 }
