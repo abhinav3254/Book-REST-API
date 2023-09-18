@@ -22,6 +22,11 @@ import com.pojo.Ratings;
 import com.pojo.User;
 import com.service.RatingsService;
 
+
+/**
+ * This class provides implementations for managing book ratings and comments in the system.
+ * It includes a method for adding ratings to books.
+ */
 @Service
 public class RatingsServiceImpl implements RatingsService {
 
@@ -38,9 +43,13 @@ public class RatingsServiceImpl implements RatingsService {
 	private BookDao bookDao;
 
 	
-	/*
-	 * This method is used to add the rating of the book
-	 * */
+	/**
+     * Adds a user rating and comment for a book in the system.
+     *
+     * @param map A map containing data for rating and comments, including book ID, rating value, and comments.
+     * @return ResponseEntity with a success message if the rating is added (HTTP status OK),
+     *         or an error message with an internal server error status if an exception occurs.
+     */
 	@Override
 	public ResponseEntity<String> addRating(Map<String, String> map) {
 

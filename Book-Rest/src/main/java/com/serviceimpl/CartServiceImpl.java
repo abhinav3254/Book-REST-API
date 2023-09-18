@@ -38,10 +38,16 @@ public class CartServiceImpl implements CartService {
 	private CartItemDao cartItemDao;
 	
 	
-	/*
-	 * 
-	 * This method is for testing and checking purpose
-	 * */
+	/**
+	 * Adds items to the cart for the currently authenticated user.
+	 * This method is for testing and checking purposes.
+	 *
+	 * @return ResponseEntity with a success message if the items are added to the cart (HTTP status OK),
+	 *         or an error message with an internal server error status if an exception occurs.
+	 *         
+	 * NOTE :- This Method is FOR TESTING PURPOSE DON"T REMOVE IT
+	 * DATED :- 12/09/2023
+	 */
 	@Override
 	public ResponseEntity<String> addToCart() {
 		try {
@@ -103,18 +109,12 @@ public class CartServiceImpl implements CartService {
 	}
 	
 	
-	/*
-	 * 
-	 * This method will add all the items to the cart
-	 * IMPORTANT Feature of this method :- 
-	 * This method will basically manage the 
-	 * quantity of the cart_items
-	 * 
-	 * If back end will have less quantity than what front end is asking
-	 * it will return false and if everything is correct then it
-	 * will return true 
-	 * 
-	 * */
+	/**
+	 * Adds all items to the cart for the currently authenticated user.
+	 * This method manages the quantity of cart_items and checks if items can be added to the cart.
+	 *
+	 * @return True if all items are successfully added to the cart, false if any quantity check fails.
+	 */
 	public Boolean addToCart2() {
 		System.out.println("Adding elements to the cart");
 

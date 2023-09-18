@@ -36,6 +36,14 @@ public class BookServiceImpl implements BookService {
 	@Autowired
 	private JwtFilter jwtFilter;
 
+	
+	/**
+	 * Adds a new book to the system.
+	 *
+	 * @param map A map containing book information.
+	 * @return ResponseEntity with a success message if the book is added (HTTP status OK),
+	 *         or an error message with an appropriate status code if any issues occur.
+	 */
 	@Override
 	public ResponseEntity<String> addBook(Map<String, String> map) {
 		try {
@@ -61,6 +69,13 @@ public class BookServiceImpl implements BookService {
 				HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
+	
+	/**
+	 * Configures a Book object based on the provided map of book information.
+	 *
+	 * @param map A map containing book information.
+	 * @return The configured Book object.
+	 */
 	private Book configBook(Map<String, String> map) {
 		try {
 			Book book = new Book();
@@ -104,6 +119,13 @@ public class BookServiceImpl implements BookService {
 		throw new RuntimeException("SOMETHING WENT WRONG IN BOOK SERVICE IMPL CLASS");
 	}
 
+	
+	/**
+	 * Retrieves a list of all books in the system.
+	 *
+	 * @return ResponseEntity with a list of books (HTTP status OK),
+	 *         or an error message with an internal server error status if an exception occurs.
+	 */
 	@Override
 	public ResponseEntity<List<Book>> getAllBook() {
 		try {
@@ -129,6 +151,14 @@ public class BookServiceImpl implements BookService {
 		return new ResponseEntity<List<Book>>(HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
+	
+	/**
+	 * Searches for books in the system based on a search query.
+	 *
+	 * @param search The search query used to find matching books.
+	 * @return ResponseEntity with a list of matching books (HTTP status OK),
+	 *         or an error response with an internal server error status if an exception occurs.
+	 */
 	@Override
 	public ResponseEntity<Book> getBookById(String id) {
 		try {
@@ -146,6 +176,17 @@ public class BookServiceImpl implements BookService {
 		return new ResponseEntity<Book>(HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
+	
+	/**
+	 * Retrieves book title, author names, and publisher names to provide search suggestions.
+	 *
+	 * @return ResponseEntity with a list of book titles, author names, and publisher names (HTTP status OK),
+	 *         or an error response with an internal server error status if an exception occurs.
+	 *         
+	 * NOTE :- IN FRONT THIS METHOD IS NOT IMPLEMENTED
+	 * This method was for when user starts the typing he will get 
+	 * auto suggestion
+	 */
 	@Override
 	public ResponseEntity<List<String>> getSuggestion() {
 		try {
@@ -169,6 +210,14 @@ public class BookServiceImpl implements BookService {
 		return new ResponseEntity<List<String>>(HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
+	
+	/**
+	 * Retrieves a list of books belonging to a specific category.
+	 *
+	 * @param category The category of books to retrieve.
+	 * @return ResponseEntity with a list of books in the specified category (HTTP status OK),
+	 *         or an error response with an internal server error status if an exception occurs.
+	 */
 	@Override
 	public ResponseEntity<List<Book>> getBookByCategory(String category) {
 		try {
@@ -180,20 +229,31 @@ public class BookServiceImpl implements BookService {
 		return new ResponseEntity<List<Book>>(HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
+	
+	/**
+	 * Updates the quantity of a specific book in the inventory.
+	 *
+	 * @param map A map containing book ID and the new quantity to be updated.
+	 * @return ResponseEntity with an OK status if the quantity is successfully updated,
+	 *         or an error response with an internal server error status if an exception occurs.
+	 */
 	@Override
 	public ResponseEntity<String> updateQuantity(Map<String, String> map) {
 		try {
 			
-			System.out.println("called this one -----------");
+//			System.out.println("called this one -----------");
+			// Extract book ID and new quantity from the provided map
 			Integer bookId = Integer.parseInt(map.get("bookId"));
+			Integer quantity = Integer.parseInt(map.get("quantity"));
+			
+			// Retrieve the book from the database using its ID
 			Optional<Book> bookOptional = bookDao.findById(bookId);
 			Book book = bookOptional.get();
 			
-			Integer quantity = Integer.parseInt(map.get("quantity"));
-			
+			// Set the new quantity for the book and save it
 			book.setBookQuantity(quantity);
 			
-			System.out.println(" book quantity ----->  "+book.getBookQuantity());
+//			System.out.println(" book quantity ----->  "+book.getBookQuantity());
 			
 			bookDao.save(book);
 			
@@ -205,6 +265,16 @@ public class BookServiceImpl implements BookService {
 		return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
+	
+	/**
+	 * Retrieves a list of upcoming books.
+	 *
+	 * @return ResponseEntity with a list of upcoming books (HTTP status OK),
+	 *         or an error response with an internal server error status if an exception occurs.
+	 *         
+	 * This method is designed to display books in marquee
+	 * in HTML
+	 */
 	@Override
 	public ResponseEntity<List<Book>> getUpcomingBooks() {
 		try {

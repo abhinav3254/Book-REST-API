@@ -7,6 +7,10 @@ import org.springframework.data.jpa.repository.Query;
 
 import com.pojo.Cart;
 
+/**
+ * The CartDao interface provides data access methods for managing user shopping carts in the database.
+ * It extends JpaRepository to leverage Spring Data JPA's built-in repository functionality.
+ */
 public interface CartDao extends JpaRepository<Cart, Integer> {
 	/*
 	@Query(nativeQuery = true,value = "SELECT cart.*, book.*,user.*\r\n"
@@ -30,6 +34,13 @@ public interface CartDao extends JpaRepository<Cart, Integer> {
 	void deleteCartByUserId(@Param("userId") String userId);
 	*/
 	
+	
+	/**
+     * Retrieves a list of user shopping carts by user ID.
+     *
+     * @param userId The ID of the user.
+     * @return A list of user shopping carts.
+     */
 	@Query(nativeQuery = true,value = "select * from cart where user_id=:uid")
 	public List<Cart> getCartByUserId(Integer uid);
 	

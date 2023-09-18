@@ -1,6 +1,5 @@
 package com.pojo;
 
-
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -16,6 +15,10 @@ import lombok.Data;
 @Entity
 @Data
 public class User {
+
+	// The @Id annotation indicates that 'id' is the primary key for this entity.
+	// The @GeneratedValue annotation specifies the strategy for generating unique
+	// IDs.
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
@@ -28,20 +31,20 @@ public class User {
 	private String address;
 	private String status;
 	private String role;
-	
+	private String gender;
+
+	// The @Temporal annotation specifies that 'dateOfBirth', 'registerDate', and 'lastLogin' are temporal fields, meaning they store date and time information.
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date dateOfBirth;
-	
-	private String gender;
-	
+
+	// The @Temporal annotation specifies that 'dateOfBirth', 'registerDate', and 'lastLogin' are temporal fields, meaning they store date and time information.
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date registerDate; 
-	
+	private Date registerDate;
+
+	// The @Temporal annotation specifies that 'dateOfBirth', 'registerDate', and 'lastLogin' are temporal fields, meaning they store date and time information.
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastLogin;
-	
-	
-	
+
 	// getter and setters
 
 	public Integer getId() {
@@ -146,8 +149,6 @@ public class User {
 
 	public void setLastLogin(Date lastLogin) {
 		this.lastLogin = lastLogin;
-	} 
-	
-	
-	
+	}
+
 }

@@ -18,6 +18,11 @@ import com.pojo.Payment;
 import com.pojo.User;
 import com.service.PaymentService;
 
+
+/**
+ * This class provides implementations for managing payment-related operations in the system.
+ * It includes a method for saving payment details.
+ */
 @Service
 public class PaymentServiceImpl implements PaymentService {
 
@@ -30,31 +35,40 @@ public class PaymentServiceImpl implements PaymentService {
 	@Autowired
 	private UserDao userDao;
 
+	
+	/**
+     * Saves payment details in the system, associated with the authenticated user.
+     *
+     * @param map A map containing payment information, including card details, amount, and date.
+     * @return ResponseEntity with a success message if the payment is saved (HTTP status OK),
+     *         or an error message with an internal server error status if an exception occurs.
+     */
 	@Override
 	public ResponseEntity<String> savePayment(Map<String, String> map) {
 		try {
-			
-			System.out.println("MAP VALUE  ----->  "+map.toString());
-			
+			// Extract payment information from the map
 			String cardNumber = map.get("cardNumber");
 			String bankName = map.get("bankName");
 			String nameOnCard = map.get("nameOnCard");
 			String cvv = map.get("cvv");
 			String dateString = map.get("date");
-			System.out.println("date is  ------->>>> "+dateString);
+			
+			// Parse the date from the string
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 			Date date = dateFormat.parse(dateString);
 
+			
 			Double amount = Double.parseDouble(map.get("amount"));
-
+			
+			// Get the authenticated user's username
 			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-
 			String token = auth.getName();
-
 			String username = jwtUtils.extractUsername(token);
-
+			
+			// Find the user by their username
 			User user = userDao.getUserByUserName(username);
 			
+			// Create a Payment object with the extracted details
 			Payment payment = new Payment();
 			
 			payment.setCardNumber(cardNumber);
@@ -67,7 +81,7 @@ public class PaymentServiceImpl implements PaymentService {
 			payment.setAmount(amount);
 			
 			System.out.println(payment.toString());
-			
+			// Save the payment information to the database
 			paymentDao.save(payment);		
 			return new ResponseEntity<String>("SAVED",HttpStatus.OK);
 

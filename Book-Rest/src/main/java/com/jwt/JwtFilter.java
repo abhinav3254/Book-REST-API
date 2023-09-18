@@ -17,6 +17,11 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import io.jsonwebtoken.Claims;
 
+/**
+ * The JwtFilter class is responsible for intercepting incoming HTTP requests to validate JWT tokens
+ * and set up Spring Security's authentication mechanism for authorized users.
+ * It extends OncePerRequestFilter from Spring Security.
+ */
 @Component
 public class JwtFilter extends OncePerRequestFilter {
 	
@@ -30,6 +35,18 @@ public class JwtFilter extends OncePerRequestFilter {
 	
 	private String userName;
 
+	
+	/**
+     * This method filters incoming HTTP requests. If the request is for login or signup, it is allowed to pass
+     * without token validation. For other requests, it extracts the JWT token from the "Authorization" header,
+     * validates it, and sets up Spring Security's authentication context if the token is valid.
+     *
+     * @param request  The incoming HTTP request.
+     * @param response The HTTP response.
+     * @param filterChain The filter chain for handling the request.
+     * @throws ServletException If an error occurs during filtering.
+     * @throws IOException      If an I/O error occurs.
+     */
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
@@ -62,14 +79,32 @@ public class JwtFilter extends OncePerRequestFilter {
 		
 	}
 	
+	
+	/**
+     * Checks if the user associated with the current JWT token is an admin.
+     *
+     * @return True if the user is an admin, false otherwise.
+     */
 	public boolean isAdmin() {
 		return "admin".equalsIgnoreCase((String) claims.get("role"));
 	}
 	
+	
+	/**
+     * Checks if the user associated with the current JWT token is a regular user.
+     *
+     * @return True if the user is a regular user, false otherwise.
+     */
 	public boolean isUser() {
 		return "user".equalsIgnoreCase((String) claims.get("role"));
 	}
 	
+	
+	/**
+     * Retrieves the username of the current user associated with the JWT token.
+     *
+     * @return The username of the current user.
+     */
 	public String getCurrentUser() {
 		return userName;
 	}

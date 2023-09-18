@@ -18,28 +18,34 @@ import javax.persistence.TemporalType;
 
 import lombok.Data;
 
-
+// Lombok's @Data annotation generates getter and setter methods for all class properties.
 @Data
 @Entity
 public class Book {
-	
+
+	// The @Id annotation indicates that 'id' is the primary key for this entity.
+	// The @GeneratedValue annotation specifies the strategy for generating unique
+	// IDs.
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
-	
+
 	@OneToOne
 	private Publishers publishers;
-	
+
 	@OneToOne
 	private Author author;
-	
+
 	@Column(length = 2000)
 	private String imageUrl;
-	
+
 	// latest change on 8 sept 2023
 	private String isbn;
 	private String pageCount;
 	private boolean bookStatus;
+	// The @Temporal annotation specifies that 'publishDate' is a temporal field,
+	// meaning it stores date and time information.
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date publishDate;
 	// upto here
@@ -48,19 +54,18 @@ public class Book {
 	@Column(length = 4000)
 	private String description;
 	private String category;
-	
+
 	private Double averageRating;
-	
+
 	@OneToMany
 	private List<Ratings> listRatings;
-	
+
 //	For Inventory
-	
+
 	private Integer bookQuantity;
 
-	
 	// getter and setters
-	
+
 	public Integer getId() {
 		return id;
 	}
@@ -180,12 +185,4 @@ public class Book {
 	public void setBookQuantity(Integer bookQuantity) {
 		this.bookQuantity = bookQuantity;
 	}
-	
-	
-	
-	
-	
-	
-	
-	
 }

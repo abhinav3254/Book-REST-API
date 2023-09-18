@@ -28,6 +28,15 @@ import com.pojo.Payment;
 import com.pojo.User;
 import com.service.OrderService;
 
+
+/**
+ * This class provides implementations for managing orders and order-related operations in the system.
+ * It includes methods for placing orders, retrieving user-specific orders, retrieving all orders for admin,
+ * and managing refund status.
+ * 
+ * @Transactional use case here
+ * Transactions are used to ensure that a series of operations on the database either all succeed or all fail together.
+ */ 
 @Transactional
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -59,35 +68,32 @@ public class OrderServiceImpl implements OrderService {
 	@Autowired
 	private CartServiceImpl cartServiceImpl;
 	
-	/*
-	 * This method basically place the order 
-	 * if addTocart returns true then only this method will be executed
-	 * 
-	 * 
-	 * */
+	/**
+     * Places an order for the currently authenticated user if items are successfully added to the cart.
+     *
+     * @parameter map A map containing additional order information such as delivery address.
+     * @return ResponseEntity with a success message if the order is placed (HTTP status OK),
+     *         or an error message with an internal server error status if an exception occurs.
+     */
 	@Override
 	public ResponseEntity<String> placeOrder(Map<String, String> map) {
 		try {
 
-			// obtain the currently authenticated user
+			// Obtain the currently authenticated user
 			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 			String userToken = authentication.getName();
 			String username = jwtUtils.extractUsername(userToken);
 			User user = userDao.getUserByUserName(username);
-			
-			// upto this find the current logged in user
 
 			
-			// first add items in the cart then place order
+			// Attempt to add items to the cart and place the order if successful
 			Boolean ans = cartServiceImpl.addToCart2();
 			
 			if (ans) {
-				
-
-				
+				// Retrieve the user's cart
 				List<Cart> cartList = cartDao.getCartByUserId(user.getId());
 				
-				System.out.println("Cart List Size is :- "+cartList.size());
+//				System.out.println("Cart List Size is :- "+cartList.size());
 				Cart cart = cartList.get(0);
 				
 
@@ -108,7 +114,7 @@ public class OrderServiceImpl implements OrderService {
 
 				// here doing cart manage
 
-				System.out.println(" -- > here is the cart items size :-- " + cart.getCartItems().size());
+//				System.out.println(" -- > here is the cart items size :-- " + cart.getCartItems().size());
 
 				List<CartItem> newList = cart.getCartItems();
 
@@ -165,11 +171,13 @@ public class OrderServiceImpl implements OrderService {
 	}
 	
 	
-	/*
-	 * This method returns List of Orders of a user which is currently
-	 * logged in
-	 * */
-
+	
+	/**
+     * Retrieves a list of orders placed by the currently authenticated user.
+     *
+     * @return ResponseEntity containing a list of user-specific orders if successful (HTTP status OK),
+     *         or an error response with an internal server error status if an exception occurs.
+     */
 	@Override
 	public ResponseEntity<List<Orders>> getAllOrders() {
 		try {
@@ -189,6 +197,14 @@ public class OrderServiceImpl implements OrderService {
 		return new ResponseEntity<List<Orders>>(HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
+	
+	/**
+     * Retrieves a list of all orders placed in the system (admin access).
+     *
+     * @return ResponseEntity containing a list of all orders if the user is an admin (HTTP status OK),
+     *         or an unauthorized response if the user is not an admin (HTTP status UNAUTHORIZED),
+     *         or an error response with an internal server error status if an exception occurs.
+     */
 	@Override
 	public ResponseEntity<List<Orders>> getAllTheOrdersPlaced() {
 		try {
@@ -205,9 +221,12 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 
-	/*
-	 * This method is basically for refund status
-	 * */
+	/**
+     * Retrieves a list of orders with a refund status (admin access).
+     *
+     * @return ResponseEntity containing a list of orders with refund status if the user is an admin (HTTP status OK),
+     *         or an error response with an internal server error status if an exception occurs.
+     */
 	@Override
 	public ResponseEntity<List<Orders>> getAllRefund() {
 		try {
