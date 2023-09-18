@@ -61,31 +61,32 @@ public class CartItemServiceImpl implements CartItemService {
 				Double price = Double.parseDouble(book.get().getPrice());
 				String formattedValueprice = df.format(price);
 				double roundedValueprice = Double.parseDouble(formattedValueprice);
-				System.out.println("roundedValueprice --> "+roundedValueprice);
+				
 				cartItem.setBookPrice(roundedValueprice);
 				cartItem.setUser(user);
 				Double cgst = (0.18 * price);
 				String formattedValuecgst = df.format(cgst);
 				double roundedValuecgst = Double.parseDouble(formattedValuecgst);
-				System.out.println("roundedValuecgst --> "+roundedValuecgst);
+				
 				cartItem.setCgst(roundedValuecgst);
 				cartItem.setSgst(roundedValuecgst);
 				Double discount = (0.10 * price);
 				
 				String formattedValuediscount = df.format(discount);
 				double roundedValuediscount = Double.parseDouble(formattedValuediscount);
-				System.out.println("roundedValuediscount --> "+roundedValuediscount);
+				
 				cartItem.setDiscount(roundedValuediscount);
 
 				Double finalPrice = (roundedValuecgst + roundedValuecgst + roundedValueprice) - roundedValuediscount;
 				
 				String formattedValuefinalPrice = df.format(finalPrice);
 				double roundedValuefinalPrice = Double.parseDouble(formattedValuefinalPrice);
-				System.out.println("roundedValuefinalPrice --> "+roundedValuefinalPrice);
+				
 				
 				cartItem.setFinalPrice(roundedValuefinalPrice);
 
 				cartItemDao.save(cartItem);
+				return new ResponseEntity<String>("Added", HttpStatus.OK);
 			} else {
 				CartItem cartItem = cartItem2;
 				cartItem.setQuantity(cartItem.getQuantity() + 1);
@@ -94,10 +95,17 @@ public class CartItemServiceImpl implements CartItemService {
 				cartItem.setDiscount(cartItem.getDiscount() * 2);
 				cartItem.setFinalPrice(cartItem.getFinalPrice() * 2);
 
-				cartItemDao.save(cartItem);
+				// here checking the quantity 
+				
+				if (book.get().getBookQuantity()<cartItem.getQuantity()) {
+					return new ResponseEntity<String>("Stock Unavailable", HttpStatus.BAD_REQUEST);
+				} else  {
+					cartItemDao.save(cartItem);
+					return new ResponseEntity<String>("Added", HttpStatus.OK);
+				}
 			}
 
-			return new ResponseEntity<String>("Added", HttpStatus.OK);
+			
 
 		} catch (Exception e) {
 			e.printStackTrace();

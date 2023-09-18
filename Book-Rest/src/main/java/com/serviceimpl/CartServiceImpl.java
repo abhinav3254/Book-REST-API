@@ -42,6 +42,7 @@ public class CartServiceImpl implements CartService {
 	public ResponseEntity<String> addToCart() {
 		try {
 			
+			System.out.println("Adding elements to the cart");
 			// to get the currently logged in user
 			Authentication auth = SecurityContextHolder.getContext().getAuthentication();;
 			String token = auth.getName();
@@ -53,9 +54,18 @@ public class CartServiceImpl implements CartService {
 			List<CartItem> listCartItems = cartItemDao.getAllItemsFromCart(user.getId());
 			
 			
+			// check the quantity here if user has added more items in the cart or not
+			
+			
+			
+			
+			
 			// Manage the quantity of the book quantity here before adding it to the cart
 			// checking every item quantity
 			for(int i = 0 ;i<listCartItems.size();i++) {
+//				if (listCartItems.get(i).getBook().getBookQuantity()>=listCartItems.get(i).getQuantity()) {
+//					throw new RuntimeException("QUANTITY EXCEED AS COMPARED TO INVENTORY");
+//				} else
 				if (listCartItems.get(i).getBook().getBookQuantity()>=listCartItems.get(i).getQuantity()) {
 					// do nothing
 				} else {
@@ -70,6 +80,7 @@ public class CartServiceImpl implements CartService {
 			
 			cartDao.save(cart);
 			
+			System.out.println("Removing reference of userid");
 			// removing the reference of user so that it can't display every time
 			for (int i = 0; i < listCartItems.size(); i++) {
 			    CartItem cartItem = listCartItems.get(i);
@@ -77,6 +88,7 @@ public class CartServiceImpl implements CartService {
 			    cartItemDao.save(cartItem); // Update the cart item in the database
 			}
 			
+			System.out.println("Added to Cart Implementation done");
 			return new ResponseEntity<String>(Constants.designMessage("ADDED"), HttpStatus.OK);
 
 		} catch (Exception e) {

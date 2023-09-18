@@ -172,6 +172,14 @@ public class Book {
 	public void setListRatings(List<Ratings> listRatings) {
 		this.listRatings = listRatings;
 	}
+
+	public Integer getBookQuantity() {
+		return bookQuantity;
+	}
+
+	public void setBookQuantity(Integer bookQuantity) {
+		this.bookQuantity = bookQuantity;
+	}
 	
 	
 	

@@ -31,6 +31,8 @@ public class Author {
 	private String nationality;
 	
 	private String gender;
+	
+	
 
 	public Integer getId() {
 		return id;
