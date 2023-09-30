@@ -1,5 +1,5 @@
 # Book-API
-
+```
 @RestController
 @RequestMapping("/api")
 public class MyController {
@@ -18,16 +18,22 @@ public class MyController {
             .body(resource);
     }
 }
+```
 
 or
 
 
+```
 @GetMapping("/{id}")
 public ResponseEntity<Employee> getEmployee(@PathVariable Long id) {
-   Employee emp = employeeService.findEmployeeById(id);
-   if(emp != null)
-        return ResponseEntity.status(HttpStatus.OK).body(emp);
-   return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+    Employee emp = employeeService.findEmployeeById(id);
+    if (emp != null) {
+        return ResponseEntity.ok(emp); // 200 OK
+    } else {
+        return ResponseEntity.notFound().build(); // 404 Not Found
+    }
 }
+```
+
 
 # proper way for response
