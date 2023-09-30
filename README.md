@@ -19,5 +19,15 @@ public class MyController {
     }
 }
 
+or
+
+
+@GetMapping("/{id}")
+public ResponseEntity<Employee> getEmployee(@PathVariable Long id) {
+   Employee emp = employeeService.findEmployeeById(id);
+   if(emp != null)
+        return ResponseEntity.status(HttpStatus.OK).body(emp);
+   return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+}
 
 # proper way for response
