@@ -57,3 +57,105 @@ The **Book Management Project** is incredibly useful for both bookstore administ
 - **Scalability**: Built with Spring Boot, the application is highly scalable and can handle the growth of your bookstore's offerings.
 
 With this project, you can take your bookstore's operations to the next level, offering customers a seamless shopping experience while optimizing your inventory management. Whether you're running a traditional bookstore or an online bookshop, the **Book Management Project** is your all-in-one solution.
+
+
+-- For author table
+```
+INSERT INTO author (author_name, date_of_birth, nationality, gender) VALUES
+('William Shakespeare', '1564-04-26 00:00:00', 'English', 'Male'),
+('Jane Austen', '1775-12-16 00:00:00', 'English', 'Female'),
+('Charles Dickens', '1812-02-07 00:00:00', 'English', 'Male'),
+('Leo Tolstoy', '1828-09-09 00:00:00', 'Russian', 'Male'),
+('Mark Twain', '1835-11-30 00:00:00', 'American', 'Male'),
+('Agatha Christie', '1890-09-15 00:00:00', 'English', 'Female'),
+('George Orwell', '1903-06-25 00:00:00', 'English', 'Male'),
+('J.K. Rowling', '1965-07-31 00:00:00', 'English', 'Female'),
+('Stephen King', '1947-09-21 00:00:00', 'American', 'Male'),
+('Gabriel García Márquez', '1927-03-06 00:00:00', 'Colombian', 'Male'),
+('Jane Eyre', '1816-04-21 00:00:00', 'English', 'Female'),
+('Franz Kafka', '1883-07-03 00:00:00', 'Austrian', 'Male'),
+('Maya Angelou', '1928-04-04 00:00:00', 'American', 'Female'),
+('Ernest Hemingway', '1899-07-21 00:00:00', 'American', 'Male'),
+('Virginia Woolf', '1882-01-25 00:00:00', 'English', 'Female'),
+('Hermann Hesse', '1877-07-02 00:00:00', 'German', 'Male'),
+('Harper Lee', '1926-04-28 00:00:00', 'American', 'Female'),
+('J.R.R. Tolkien', '1892-01-03 00:00:00', 'English', 'Male'),
+('Margaret Atwood', '1939-11-18 00:00:00', 'Canadian', 'Female'),
+('F. Scott Fitzgerald', '1896-09-24 00:00:00', 'American', 'Male'),
+('Louisa May Alcott', '1832-11-29 00:00:00', 'American', 'Female'),
+('Aldous Huxley', '1894-07-26 00:00:00', 'English', 'Male'),
+('Toni Morrison', '1931-02-18 00:00:00', 'American', 'Female'),
+('Dostoevsky', '1821-11-11 00:00:00', 'Russian', 'Male'),
+('Nora Roberts', '1950-10-10 00:00:00', 'American', 'Female');
+
+```
+
+
+for publishers
+
+```
+
+INSERT INTO publishers (publisher_name, country) VALUES
+('Penguin Random House', 'United States'),
+('HarperCollins', 'United States'),
+('Simon & Schuster', 'United States'),
+('Hachette Livre', 'France'),
+('Macmillan Publishers', 'United Kingdom'),
+('Pearson', 'United Kingdom'),
+('Springer', 'Germany'),
+('Oxford University Press', 'United Kingdom'),
+('Cambridge University Press', 'United Kingdom'),
+('Wiley', 'United States'),
+('Scholastic', 'United States'),
+('Penguin Books', 'United Kingdom'),
+('Random House', 'United States'),
+('HarperCollins Publishers', 'United Kingdom'),
+('Penguin Group', 'United Kingdom'),
+('Harvard University Press', 'United States'),
+('Bloomsbury Publishing', 'United Kingdom'),
+('Pan Macmillan', 'United Kingdom'),
+('John Wiley & Sons', 'United States'),
+('Houghton Mifflin Harcourt', 'United States'),
+('Scholastic Corporation', 'United States'),
+('Cambridge University Press', 'United States'),
+('Taylor & Francis', 'United Kingdom'),
+('Pearson Education', 'United States'),
+('Oxford University Press', 'United States'),
+('Harvard University Press', 'United Kingdom');
+
+```
+
+
+for categories
+
+```
+
+
+INSERT INTO Categories (category_name) VALUES
+('Fiction'),
+('Non-fiction'),
+('Science'),
+('Romance'),
+('Mystery'),
+('Fantasy'),
+('Biography'),
+('History'),
+('Self-Help'),
+('Cooking'),
+('Travel'),
+('Science Fiction'),
+('Thriller'),
+('Health & Wellness'),
+('Business'),
+('Children\'s'),
+('Art & Photography'),
+('Religion & Spirituality'),
+('Politics'),
+('Sports'),
+('Music'),
+('Education'),
+('Nature'),
+('Technology'),
+('Humor');
+
+```
